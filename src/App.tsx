@@ -9,6 +9,7 @@ import Account from "./pages/Account";
 import Login from "./pages/Login";
 import PageNotFound from "./pages/PageNotFound";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import {Toaster} from "react-hot-toast";
 function App() {
   const router = createBrowserRouter([
     {
@@ -37,6 +38,9 @@ function App() {
     <>
       <ReactQueryDevtools initialIsOpen={ true} />
      <RouterProvider router={router}></RouterProvider>
+      <Toaster position='top-center' gutter={12} containerStyle={{margin:'8px'}} toastOptions={{success:{
+      duration:3000,},error:{duration:5000},style:{fontSize:'16px',maxWidth:'500px',padding:'24px',backgroundColor:'var(--color-gray-0)',color:'var(-color-gray-700)'}
+      }}/>
     </>
   )
 }

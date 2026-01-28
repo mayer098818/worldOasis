@@ -2,11 +2,16 @@ import Heading from "../ui/Heading";
 import Row from "../ui/Row";
 import { getCabins } from "../services/apiCabins";
 import { queryClient } from "../main";
-import { useLoaderData } from "react-router-dom";
 import CabinTable from "../features/cabins/CabinTable";
+import {useQuery} from "@tanstack/react-query";
+import Spinner from "../ui/Spinner.tsx";
 function Cabins() {
-  const data = useLoaderData()
-  console.log(data,'da')
+  const { data: cabins,isLoading } = useQuery({
+    queryKey: ["cabins"],
+    queryFn: getCabins,
+    refetchOnWindowFocus: true, // 默认 true
+  });
+if(isLoading)return <Spinner/>
   return (
     <>
     <Row type="horizontal">
@@ -14,14 +19,14 @@ function Cabins() {
       <p>Filter / Sort</p>
     </Row>
     <Row>
-        <CabinTable cabins={ data} />
+        <CabinTable cabins={ cabins} />
     </Row>
     </>
   );
 }
 
 export async function cabinsLoader() {
-  const data=await queryClient.fetchQuery({queryKey:['cabins'],queryFn:getCabins})
+  const data=await queryClient.prefetchQuery({queryKey:['cabins'],queryFn:getCabins})
   return data
 }
 export default Cabins;

@@ -1,4 +1,4 @@
-import { getToday } from "../utils/helpers";
+import { getToday } from "../utils/helpers.ts";
 import supabase from "./supabase";
 
 export async function getBooking(id) {

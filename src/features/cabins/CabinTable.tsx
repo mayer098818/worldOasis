@@ -24,7 +24,15 @@ const TableHeader = styled.header`
   color: var(--color-grey-600);
   padding: 1.6rem 2.4rem;
 `;
-function CabinTable({cabins}) {
+export  type CabinProps={
+    id:string
+    image:string
+    name:string
+    maxCapacity:number
+    regularPrice:number
+    discount:number
+}
+function CabinTable({cabins}:{cabins:CabinProps[]}) {
   return (
     <>
      <Table role="table">

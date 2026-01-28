@@ -1,4 +1,10 @@
 import styled from "styled-components";
+import {formatCurrency} from '../../utils/helpers.ts'
+import type {CabinProps} from "./CabinTable.tsx";
+import {deleteCabin} from "../../services/apiCabins.ts";
+import {useMutation} from "@tanstack/react-query";
+import {queryClient} from "../../main.tsx";
+import toast from "react-hot-toast";
 
 const TableRow = styled.div`
   display: grid;
@@ -38,7 +44,36 @@ const Discount = styled.div`
   font-weight: 500;
   color: var(--color-green-700);
 `;
-const CabinRow = ({cabin}) => {
-  return <>11</>
+
+const CabinRow = ({cabin}:{cabin:CabinProps}) => {
+  const deleteCabinMutation=useMutation({
+    // 这里只是告诉mutation这个函数,真正传值是在mutate传值的时候
+    mutationFn:deleteCabin,
+    onSuccess:()=>{
+      toast.success("delete successfully")
+      queryClient.invalidateQueries({
+        queryKey:['cabins']
+      })
+    },
+    onError:(error)=>{
+      toast.error(error.message);
+    }
+  })
+  const { isPending } = deleteCabinMutation;
+  const {image,name,maxCapacity,regularPrice,discount,id:cabinId}=cabin;
+  return <>  <TableRow role="row">
+    <Img src={image} />
+    <Cabin>{name}</Cabin>
+    <div>Fits up to {maxCapacity} guests</div>
+    <Price>{formatCurrency(regularPrice)}</Price>
+    {discount ? (
+        <Discount>{formatCurrency(discount)}</Discount>
+    ) : (
+        <span>&mdash;</span>
+    )}
+    <button disabled={isPending} onClick={()=>deleteCabinMutation.mutate(cabinId)}>
+      {isPending?'Delete...':'Delete'}
+    </button>
+  </TableRow></>
 }
 export default CabinRow
