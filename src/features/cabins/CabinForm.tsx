@@ -19,7 +19,8 @@ type CabinFormProps = {
 };
 
 const CabinForm = ({ onSearch, cabinConfig, cabinData, control, errors }: CabinFormProps) => {
-    const renderItem = cabinConfig.map((item: any) => {
+    const renderItem = cabinConfig?.map((item: any) => {
+        console.log('此时的item', item)
         const Component = ComponentMap[item.type as keyof typeof ComponentMap]
         return (
             <CabinFormRow item={item} key={item.id} error={errors?.[item.id]}>

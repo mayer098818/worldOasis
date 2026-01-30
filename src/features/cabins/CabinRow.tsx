@@ -72,7 +72,7 @@ const cabinConfig = [{
   id: 'image', label: 'Cabin photo', type: 'upload', rules: {
   }
 }]
-const CabinRow = ({ cabin }: { cabin: CabinProps }) => {
+const CabinRow = ({ cabin, cabinConfig }: { cabin: CabinProps, cabinConfig: any }) => {
   const queryClient = useQueryClient()
   const [isShowForm, setIsShowForm] = useState(false)
   const deleteCabinMutation = useMutation({

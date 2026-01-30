@@ -24,30 +24,30 @@ const TableHeader = styled.header`
   color: var(--color-grey-600);
   padding: 1.6rem 2.4rem;
 `;
-export  type CabinProps={
-    id:string
-    image:string
-    name:string
-    maxCapacity:number
-    regularPrice:number
-    discount:number
+export type CabinProps = {
+  id: string
+  image: string
+  name: string
+  maxCapacity: number
+  regularPrice: number
+  discount: number
 }
-function CabinTable({cabins}:{cabins:CabinProps[]}) {
+function CabinTable({ cabins, cabinConfig }: { cabins: CabinProps[], cabinConfig: any }) {
   return (
     <>
-     <Table role="table">
-      <TableHeader role="row">
-        <div></div>
-        <div>Cabin</div>
-        <div>Capacity</div>
-        <div>Price</div>
-        <div>Discount</div>
-        <div></div>
-      </TableHeader>
-      {cabins.map((cabin) => (
-        <CabinRow cabin={cabin} key={cabin.id} />
-      ))}
-    </Table>
+      <Table role="table">
+        <TableHeader role="row">
+          <div></div>
+          <div>Cabin</div>
+          <div>Capacity</div>
+          <div>Price</div>
+          <div>Discount</div>
+          <div></div>
+        </TableHeader>
+        {cabins.map((cabin) => (
+          <CabinRow cabin={cabin} key={cabin.id} cabinConfig={cabinConfig} />
+        ))}
+      </Table>
     </>
   )
 }

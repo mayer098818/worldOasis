@@ -7,6 +7,33 @@ import Spinner from "../ui/Spinner.tsx";
 import Button from "../ui/Button.tsx";
 import CreateCabinForm from "../features/cabins/CreateCabinForm.tsx";
 import { useState } from "react";
+const cabinConfig = [{
+  id: 'name', label: 'Cabin name', type: 'input', rules: {
+    required: 'this field is required'
+  }
+}, {
+  id: 'maxCapacity', label: 'maxCapacity', type: 'numberInput', defaultValue: 0, rules: {
+    min: { value: 0, message: 'maxCapacity2 min value is 0' }, valueAsNumber: true
+  }
+},
+{
+  id: 'regularPrice', label: 'regularPrice', type: 'numberInput', rules: {
+    min: { value: 0, message: 'regularPrice min value is 0' }, valueAsNumber: true
+  }
+}, {
+  id: 'discount', label: 'discount', type: 'numberInput', rules: {
+    validate: (value: any, formValues: any) => {
+      return Number(value) < Number(formValues.regularPrice) || 'discount should smaller than regularPrice '
+    }
+  }
+}, {
+  id: 'description', label: 'description', type: 'input', rules: {
+    required: 'this field is required'
+  }
+}, {
+  id: 'image', label: 'Cabin photo', type: 'upload', rules: {
+  }
+}]
 function Cabins() {
   const [showForm, setShowForm] = useState(false);
   const { data: cabins, isLoading } = useQuery({
@@ -22,9 +49,9 @@ function Cabins() {
         <p>Filter / Sort</p>
       </Row>
       <Row>
-        <CabinTable cabins={cabins} />
+        <CabinTable cabins={cabins} cabinConfig={cabinConfig} />
         <Button onClick={() => setShowForm(!showForm)}>Add New Cabin</Button>
-        {showForm && <CreateCabinForm onCloseForm={() => setShowForm(false)} />}
+        {showForm && <CreateCabinForm cabinConfig={cabinConfig} onCloseForm={() => setShowForm(false)} />}
       </Row>
     </>
   );

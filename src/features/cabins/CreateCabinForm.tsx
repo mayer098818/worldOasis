@@ -44,8 +44,8 @@ type CabinFormData = {
 };
 type createCabinFormProps = {
     onCloseForm?: () => void
-    cabinData: any
-    isEdit: any
+    cabinData?: any
+    isEdit?: any
     cabinConfig: any
 }
 const data = [{
