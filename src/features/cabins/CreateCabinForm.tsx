@@ -34,50 +34,14 @@ const FormRowStyled = styled.div`
     gap: 1.2rem;
   }
 `;
-type CabinFormData = {
-    name: string;
-    maxCapacity: number;
-    regularPrice: number;
-    discount: number;
-    description: string;
-    image: FileList; // 这里是 FileList
-};
 type createCabinFormProps = {
     onCloseForm?: () => void
     cabinData?: any
     isEdit?: any
     cabinConfig: any
 }
-const data = [{
-    id: 'name', label: 'Cabin name', type: 'input', rules: {
-        required: 'this field is required'
-    }
-}, {
-    id: 'maxCapacity', label: 'maxCapacity', type: 'numberInput', defaultValue: 0, rules: {
-        min: { value: 0, message: 'maxCapacity2 min value is 0' }, valueAsNumber: true
-    }
-},
-{
-    id: 'regularPrice', label: 'regularPrice', type: 'numberInput', rules: {
-        min: { value: 0, message: 'regularPrice min value is 0' }, valueAsNumber: true
-    }
-}, {
-    id: 'discount', label: 'discount', type: 'numberInput', rules: {
-        validate: (value: any, formValues: any) => {
-            return Number(value) < Number(formValues.regularPrice) || 'discount should smaller than regularPrice '
-        }
-    }
-}, {
-    id: 'description', label: 'description', type: 'input', rules: {
-        required: 'this field is required'
-    }
-}, {
-    id: 'image', label: 'Cabin photo', type: 'upload', rules: {
-    }
-}]
 const CreateCabinForm: React.FC<createCabinFormProps> = ({ cabinConfig, onCloseForm, cabinData = {}, isEdit = false }) => {
-    const { editId, ...rest } = cabinData
-    console.log(cabinConfig, 'cabinConfig')
+    const { id:editId, ...rest } = cabinData
     // 根据 editId 判断是编辑还是新增模式
     const isEditMode = Boolean(editId) || isEdit
 
@@ -131,8 +95,8 @@ const CreateCabinForm: React.FC<createCabinFormProps> = ({ cabinConfig, onCloseF
     const handleSearch = () => { console.log('handleSearch') }
     return (
         <>
-            <Form onSubmit={handleSubmit(onSubmit, onerror)}>
-                <CabinForm onSearch={handleSearch} cabinConfig={cabinConfig} errors={errors} control={control} />
+            <Form onSubmit={handleSubmit(onSubmit, onerror)} >
+                <CabinForm onSearch={handleSearch} cabinConfig={cabinConfig} errors={errors} control={control} isPending={isPending}/>
                 <FormRowStyled>
                     {/* type is an HTML attribute! */}
                     <Button variation="secondary" type="reset" onClick={onCloseForm}>

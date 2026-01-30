@@ -17,7 +17,8 @@ export async function deleteCabin(id: string) {
 
 export async function createEditCabin(newCabin, id) {
   const hasImagePath = newCabin.image?.startsWith?.(supabaseUrl);
-
+  // https://lfvrvjnnobpkhjbgprup.supabase.co/storage/v1/object/public/cabin-images/0.3044176254811811-cabin-005.jpg
+  // "https://lfvrvjnnobpkhjbgprup.supabase.co/storage/v1/object/public/cabin-images/0.5835239360702766-cabin-007.jpg"
   const imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll(
     "/",
     ""
@@ -25,7 +26,7 @@ export async function createEditCabin(newCabin, id) {
   const imagePath = hasImagePath
     ? newCabin.image
     : `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
-
+console.log(imagePath,id,'imagePath')
   // 1. Create/edit cabin
   let query = supabase.from("cabins");
 

@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import CreateCabinForm from "./CreateCabinForm.tsx";
+import {Button} from "antd";
 
 const TableRow = styled.div`
   display: grid;
@@ -45,33 +46,6 @@ const Discount = styled.div`
   font-weight: 500;
   color: var(--color-green-700);
 `;
-const cabinConfig = [{
-  id: 'name', label: 'Cabin name', type: 'input', rules: {
-    required: 'this field is required'
-  }
-}, {
-  id: 'maxCapacity', label: 'maxCapacity', type: 'numberInput', defaultValue: 0, rules: {
-    min: { value: 0, message: 'maxCapacity2 min value is 0' }, valueAsNumber: true
-  }
-},
-{
-  id: 'regularPrice', label: 'regularPrice', type: 'numberInput', rules: {
-    min: { value: 0, message: 'regularPrice min value is 0' }, valueAsNumber: true
-  }
-}, {
-  id: 'discount', label: 'discount', type: 'numberInput', rules: {
-    validate: (value: any, formValues: any) => {
-      return Number(value) < Number(formValues.regularPrice) || 'discount should smaller than regularPrice '
-    }
-  }
-}, {
-  id: 'description', label: 'description', type: 'input', rules: {
-    required: 'this field is required'
-  }
-}, {
-  id: 'image', label: 'Cabin photo', type: 'upload', rules: {
-  }
-}]
 const CabinRow = ({ cabin, cabinConfig }: { cabin: CabinProps, cabinConfig: any }) => {
   const queryClient = useQueryClient()
   const [isShowForm, setIsShowForm] = useState(false)
@@ -101,10 +75,12 @@ const CabinRow = ({ cabin, cabinConfig }: { cabin: CabinProps, cabinConfig: any 
       ) : (
         <span>&mdash;</span>
       )}
-      <button onClick={() => { setIsShowForm((show) => !show) }}>Edit</button>
-      <button disabled={isPending} onClick={() => deleteCabinMutation.mutate(cabinId)}>
-        {isPending ? 'Delete...' : 'Delete'}
-      </button>
+      <div style={{display: 'flex', justifyContent: 'space-between',flexDirection:'row',alignItems: 'center'}}>
+        <Button onClick={() => { setIsShowForm((show) => !show) }}>Edit</Button>
+        <Button disabled={isPending} onClick={() => deleteCabinMutation.mutate(cabinId)}>
+          {isPending ? 'Delete...' : 'Delete'}
+        </Button>
+      </div>
     </TableRow>
     {isShowForm && <CreateCabinForm isEdit={true} cabinConfig={cabinConfig} cabinData={cabin} onCloseForm={() => setIsShowForm(false)} ></CreateCabinForm>}
   </>

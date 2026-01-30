@@ -5,7 +5,7 @@ const FormRowStyled = styled.div`
   align-items: center;
   grid-template-columns: 24rem 1fr 1.2fr;
   gap: 2.4rem;
-
+  //margin-left: 6rem;
   padding: 1.2rem 0;
 
   &:first-child {
@@ -19,15 +19,16 @@ const FormRowStyled = styled.div`
   &:not(:last-child) {
     border-bottom: 1px solid var(--color-grey-100);
   }
-
-  &:has(button) {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1.2rem;
-  }
+  //暂时注释
+  //&:has(button) {
+  //  display: flex;
+  //  justify-content: flex-end;
+  //  gap: 1.2rem;
+  //}
 `;
 const Label = styled.label`
   font-weight: 500;
+    min-width: 220px;
 `;
 const Error = styled.span`
   font-size: 1.4rem;

@@ -27,7 +27,7 @@ const cabinConfig = [{
     }
   }
 }, {
-  id: 'description', label: 'description', type: 'input', rules: {
+  id: 'description', label: 'description', type: 'textArea', rules: {
     required: 'this field is required'
   }
 }, {
