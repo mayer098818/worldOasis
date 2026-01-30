@@ -45,7 +45,33 @@ const Discount = styled.div`
   font-weight: 500;
   color: var(--color-green-700);
 `;
-
+const cabinConfig = [{
+  id: 'name', label: 'Cabin name', type: 'input', rules: {
+    required: 'this field is required'
+  }
+}, {
+  id: 'maxCapacity', label: 'maxCapacity', type: 'numberInput', defaultValue: 0, rules: {
+    min: { value: 0, message: 'maxCapacity2 min value is 0' }, valueAsNumber: true
+  }
+},
+{
+  id: 'regularPrice', label: 'regularPrice', type: 'numberInput', rules: {
+    min: { value: 0, message: 'regularPrice min value is 0' }, valueAsNumber: true
+  }
+}, {
+  id: 'discount', label: 'discount', type: 'numberInput', rules: {
+    validate: (value: any, formValues: any) => {
+      return Number(value) < Number(formValues.regularPrice) || 'discount should smaller than regularPrice '
+    }
+  }
+}, {
+  id: 'description', label: 'description', type: 'input', rules: {
+    required: 'this field is required'
+  }
+}, {
+  id: 'image', label: 'Cabin photo', type: 'upload', rules: {
+  }
+}]
 const CabinRow = ({ cabin }: { cabin: CabinProps }) => {
   const queryClient = useQueryClient()
   const [isShowForm, setIsShowForm] = useState(false)
@@ -80,7 +106,7 @@ const CabinRow = ({ cabin }: { cabin: CabinProps }) => {
         {isPending ? 'Delete...' : 'Delete'}
       </button>
     </TableRow>
-    {isShowForm && <CreateCabinForm isEdit={true} cabinData={cabin} onCloseForm={() => setIsShowForm(false)} ></CreateCabinForm>}
+    {isShowForm && <CreateCabinForm isEdit={true} cabinConfig={cabinConfig} cabinData={cabin} onCloseForm={() => setIsShowForm(false)} ></CreateCabinForm>}
   </>
 }
 export default CabinRow

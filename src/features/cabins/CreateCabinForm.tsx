@@ -1,16 +1,12 @@
 import styled from "styled-components";
 
-import Input from "../../ui/Input";
-import Form from "../../ui/Form";
-import FileInput from "../../ui/FileInput";
-import Textarea from "../../ui/Textarea";
+import Form from "../../ui/Form.tsx";
 import Button from "../../ui/Button.tsx";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createNewCabin } from "../../services/apiCabins.ts";
+import { createEditCabin } from "../../services/apiCabins.ts";
 import toast from "react-hot-toast";
-import FormRow from "../../ui/FormRow.tsx";
-import { useState } from "react";
+import CabinForm from "./CabinForm.tsx";
 
 const FormRowStyled = styled.div`
   display: grid;
@@ -38,94 +34,115 @@ const FormRowStyled = styled.div`
     gap: 1.2rem;
   }
 `;
-
-const Label = styled.label`
-  font-weight: 500;
-`;
-
-
-type createCabinFormProps = {
-  onCloseForm?: () => void
-  cabinData: any
-  isEdit: any
-}
 type CabinFormData = {
-  name: string;
-  maxCapacity: number;
-  regularPrice: number;
-  discount: number;
-  description: string;
-  image: FileList; // 这里是 FileList
+    name: string;
+    maxCapacity: number;
+    regularPrice: number;
+    discount: number;
+    description: string;
+    image: FileList; // 这里是 FileList
 };
-function CreateCabinForm({ onCloseForm, cabinData = {}, isEdit = false }: createCabinFormProps) {
-  const queryClient = useQueryClient()
-  const [isEditSection, setIsEditSection] = useState(isEdit)
-  const { id, ...cabin } = cabinData
-  const defaultValues = {
-    ...cabin
-  }
-  const data = [{
-    id: 'name', label: 'Cabin name', type: 'text', rules: {
-      required: 'this field is required'
-    }
-  }, {
-    id: 'maxCapacity', label: 'maxCapacity', type: 'number', defaultValue: 0, rules: {
-      min: { value: 0, message: 'maxCapacity2 min value is 0' }, valueAsNumber: true
-    }
-  },
-  {
-    id: 'regularPrice', label: 'regularPrice', type: 'number', rules: {
-      min: { value: 0, message: 'regularPrice min value is 0' }, valueAsNumber: true
-    }
-  }, {
-    id: 'discount', label: 'discount', type: 'number', rules: {
-      validate: (value: any, formValues: any) => {
-        return Number(value) < Number(formValues.regularPrice) || 'discount should smaller than regularPrice '
-      }
-    }
-  }, {
-    id: 'description', label: 'description', type: 'number', rules: {
-      required: 'this field is required'
-    }
-  }, {
-    id: 'image', label: 'Cabin photo', type: 'file', rules: {
-    }
-  }]
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<CabinFormData>({ defaultValues })
-  const { mutate, isPending } = useMutation({
-    mutationFn: createNewCabin,
-    onSuccess: () => {
-      toast.success('Cabin created successfully')
-      queryClient.invalidateQueries({ queryKey: ['cabins'] })
-      reset()
-      onCloseForm()
-    },
-    onError: () => {
-      toast.error('Error creating cabin')
-    }
-  })
-  const onSubmit = (data) => {
-    console.log(data, 'data')
-    const file = data.image?.[0]
-    console.log(file, 'file')
-    mutate({ ...data, image: file })
-  }
-
-  return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
-      {data.map(item => (
-        <FormRow key={item.id} label={item.label} error={errors?.[item.id]}><Input type={item.type} defaultValue={item.defaultValue || ''} id={item.id} {...register(item.id, item.rules)} /></FormRow>
-      ))}
-
-      <FormRowStyled>
-        {/* type is an HTML attribute! */}
-        <Button variation="secondary" type="reset" onClick={onCloseForm}>
-          Cancel
-        </Button>
-        <Button disabled={isPending} type="submit">{isEditSection ? 'Edit Cabin' : 'Add New Cabin'}</Button>
-      </FormRowStyled>
-    </Form >
-  );
+type createCabinFormProps = {
+    onCloseForm?: () => void
+    cabinData: any
+    isEdit: any
+    cabinConfig: any
 }
+const data = [{
+    id: 'name', label: 'Cabin name', type: 'input', rules: {
+        required: 'this field is required'
+    }
+}, {
+    id: 'maxCapacity', label: 'maxCapacity', type: 'numberInput', defaultValue: 0, rules: {
+        min: { value: 0, message: 'maxCapacity2 min value is 0' }, valueAsNumber: true
+    }
+},
+{
+    id: 'regularPrice', label: 'regularPrice', type: 'numberInput', rules: {
+        min: { value: 0, message: 'regularPrice min value is 0' }, valueAsNumber: true
+    }
+}, {
+    id: 'discount', label: 'discount', type: 'numberInput', rules: {
+        validate: (value: any, formValues: any) => {
+            return Number(value) < Number(formValues.regularPrice) || 'discount should smaller than regularPrice '
+        }
+    }
+}, {
+    id: 'description', label: 'description', type: 'input', rules: {
+        required: 'this field is required'
+    }
+}, {
+    id: 'image', label: 'Cabin photo', type: 'upload', rules: {
+    }
+}]
+const CreateCabinForm: React.FC<createCabinFormProps> = ({ cabinConfig, onCloseForm, cabinData = {}, isEdit = false }) => {
+    const { editId, ...rest } = cabinData
+    console.log(cabinConfig, 'cabinConfig')
+    // 根据 editId 判断是编辑还是新增模式
+    const isEditMode = Boolean(editId) || isEdit
 
-export default CreateCabinForm;
+    const defaultValues = {
+        ...rest,
+        image: rest.image
+            ? [
+                {
+                    uid: '-1',
+                    name: 'cabin.jpg',
+                    status: 'done',
+                    url: rest.image,
+                }
+            ]
+            : []
+    }
+
+    const { control, handleSubmit, formState: { errors }, reset } = useForm({ defaultValues })
+
+    // query
+    const query = useQueryClient()
+    const { mutate: mutateForm, isPending } = useMutation<any, Error, { newCabinData: any; id: any }>({
+        mutationFn: ({ newCabinData, id }) => createEditCabin(newCabinData, id),
+        onSuccess: () => {
+            toast.success(isEditMode ? 'Cabin updated successfully' : 'Cabin created successfully')
+            query.invalidateQueries({ queryKey: ['cabins'] })
+            reset()
+            onCloseForm?.()
+        },
+        onError: (err) => {
+            toast.error(isEditMode ? `Error updating cabin: ${err.message}` : `Error creating cabin: ${err.message}`)
+        },
+    })
+
+    const onSubmit = (data: any) => {
+        console.log(data, 'data')
+        // 处理图片：如果是编辑模式且图片是 URL 字符串，直接使用；否则取 fileList 的第一个
+        const image = Array.isArray(data.image) && data.image[0]?.url
+            ? data.image[0].url
+            : data.image?.[0]?.originFileObj || data.image?.[0]
+
+        // 移除 image 数组，只保留实际图片数据
+        const { image: _image, ...restData } = data
+        const newCabinData = { ...restData, image }
+
+        mutateForm({ newCabinData, id: editId })
+    }
+    const onerror = (errors: any) => {
+        console.log('errors:', errors)
+    }
+    const handleSearch = () => { console.log('handleSearch') }
+    return (
+        <>
+            <Form onSubmit={handleSubmit(onSubmit, onerror)}>
+                <CabinForm onSearch={handleSearch} cabinConfig={cabinConfig} errors={errors} control={control} />
+                <FormRowStyled>
+                    {/* type is an HTML attribute! */}
+                    <Button variation="secondary" type="reset" onClick={onCloseForm}>
+                        Cancel
+                    </Button>
+                    <Button disabled={isPending} type="submit">
+                        {isEditMode ? 'Update Cabin' : 'Add New Cabin'}
+                    </Button>
+                </FormRowStyled>
+            </Form>
+        </>)
+}
+export default CreateCabinForm
