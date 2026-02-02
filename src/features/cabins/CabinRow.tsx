@@ -6,7 +6,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import CreateCabinForm from "./CreateCabinForm.tsx";
-import {Button} from "antd";
+import { Button } from "antd";
+import useDeleteCabin from "./useDeleteCabin.ts";
+import useCreateCabin from "./useCreateCabin.ts";
 
 const TableRow = styled.div`
   display: grid;
@@ -27,6 +29,7 @@ const Img = styled.img`
   object-fit: cover;
   object-position: center;
   transform: scale(1.5) translateX(-7px);
+  margin-left:10px
 `;
 
 const Cabin = styled.div`
@@ -47,23 +50,26 @@ const Discount = styled.div`
   color: var(--color-green-700);
 `;
 const CabinRow = ({ cabin, cabinConfig }: { cabin: CabinProps, cabinConfig: any }) => {
-  const queryClient = useQueryClient()
   const [isShowForm, setIsShowForm] = useState(false)
-  const deleteCabinMutation = useMutation({
-    // 这里只是告诉mutation这个函数,真正传值是在mutate传值的时候
-    mutationFn: deleteCabin,
-    onSuccess: () => {
-      toast.success("delete successfully")
-      queryClient.invalidateQueries({
-        queryKey: ['cabins']
-      })
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    }
-  })
-  const { isPending } = deleteCabinMutation;
+  const { isDeleting, deleteCabin } = useDeleteCabin()
   const { image, name, maxCapacity, regularPrice, discount, id: cabinId } = cabin;
+  const { mutateForm, isPending } = useCreateCabin()
+  const handleDuplicate = (cabin: CabinProps) => {
+    const { id, image, ...rest } = cabin
+    const newCabin = {
+      ...rest,
+      name: `copy of ${cabin.name}`,
+      image
+    }
+    mutateForm({ newCabinData: newCabin, id: null }, {
+      onSuccess: () => {
+        toast.success('Duplicate successfully')
+      },
+      onError: (error) => {
+        toast.error(error.message)
+      }
+    })
+  }
   return <>
     <TableRow role="row">
       <Img src={image} />
@@ -75,10 +81,11 @@ const CabinRow = ({ cabin, cabinConfig }: { cabin: CabinProps, cabinConfig: any 
       ) : (
         <span>&mdash;</span>
       )}
-      <div style={{display: 'flex', justifyContent: 'space-between',flexDirection:'row',alignItems: 'center'}}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '4px', flexDirection: 'row', alignItems: 'center' }}>
+        <Button disabled={isPending} onClick={() => handleDuplicate(cabin)}>Duplicate</Button>
         <Button onClick={() => { setIsShowForm((show) => !show) }}>Edit</Button>
-        <Button disabled={isPending} onClick={() => deleteCabinMutation.mutate(cabinId)}>
-          {isPending ? 'Delete...' : 'Delete'}
+        <Button disabled={isDeleting} onClick={() => deleteCabin(cabinId)}>
+          {isDeleting ? 'Delete...' : 'Delete'}
         </Button>
       </div>
     </TableRow>

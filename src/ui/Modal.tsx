@@ -1,5 +1,6 @@
 import styled from "styled-components";
-
+import { ArrowLeft } from 'lucide-react'
+import { createPortal } from "react-dom";
 const StyledModal = styled.div`
   position: fixed;
   top: 50%;
@@ -48,3 +49,21 @@ const Button = styled.button`
     color: var(--color-grey-500);
   }
 `;
+type ModalProps = {
+  children: React.ReactNode
+  onClose?: () => void
+}
+export const Modal: React.FC<ModalProps> = ({ children, onClose }) => {
+  return createPortal(
+    <Overlay>
+      <StyledModal>
+        <Button onClick={onClose}>
+          <ArrowLeft />
+        </Button>
+
+        <div>{children}</div>
+      </StyledModal>
+    </Overlay>,
+    document.body
+  );
+}

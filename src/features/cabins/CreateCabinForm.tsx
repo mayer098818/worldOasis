@@ -7,6 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createEditCabin } from "../../services/apiCabins.ts";
 import toast from "react-hot-toast";
 import CabinForm from "./CabinForm.tsx";
+import useCreateCabin from "./useCreateCabin.ts";
 
 const FormRowStyled = styled.div`
   display: grid;
@@ -35,13 +36,13 @@ const FormRowStyled = styled.div`
   }
 `;
 type createCabinFormProps = {
-    onCloseForm?: () => void
+    onCloseModal?: () => void
     cabinData?: any
     isEdit?: any
     cabinConfig: any
 }
-const CreateCabinForm: React.FC<createCabinFormProps> = ({ cabinConfig, onCloseForm, cabinData = {}, isEdit = false }) => {
-    const { id:editId, ...rest } = cabinData
+const CreateCabinForm: React.FC<createCabinFormProps> = ({ cabinConfig, onCloseModal, cabinData = {}, isEdit = false }) => {
+    const { id: editId, ...rest } = cabinData
     // 根据 editId 判断是编辑还是新增模式
     const isEditMode = Boolean(editId) || isEdit
 
@@ -59,23 +60,19 @@ const CreateCabinForm: React.FC<createCabinFormProps> = ({ cabinConfig, onCloseF
             : []
     }
 
+    // 定义空值用于重置表单
+    const emptyValues = {
+        name: '',
+        maxCapacity: 0,
+        regularPrice: null,
+        discount: null,
+        description: '',
+        image: []
+    }
+
     const { control, handleSubmit, formState: { errors }, reset } = useForm({ defaultValues })
 
-    // query
-    const query = useQueryClient()
-    const { mutate: mutateForm, isPending } = useMutation<any, Error, { newCabinData: any; id: any }>({
-        mutationFn: ({ newCabinData, id }) => createEditCabin(newCabinData, id),
-        onSuccess: () => {
-            toast.success(isEditMode ? 'Cabin updated successfully' : 'Cabin created successfully')
-            query.invalidateQueries({ queryKey: ['cabins'] })
-            reset()
-            onCloseForm?.()
-        },
-        onError: (err) => {
-            toast.error(isEditMode ? `Error updating cabin: ${err.message}` : `Error creating cabin: ${err.message}`)
-        },
-    })
-
+    const { mutateForm, isPending } = useCreateCabin()
     const onSubmit = (data: any) => {
         console.log(data, 'data')
         // 处理图片：如果是编辑模式且图片是 URL 字符串，直接使用；否则取 fileList 的第一个
@@ -87,7 +84,17 @@ const CreateCabinForm: React.FC<createCabinFormProps> = ({ cabinConfig, onCloseF
         const { image: _image, ...restData } = data
         const newCabinData = { ...restData, image }
 
-        mutateForm({ newCabinData, id: editId })
+        mutateForm({ newCabinData, id: editId }, {
+            onSuccess: () => {
+                toast.success(isEditMode ? 'Cabin updated successfully' : 'Cabin created successfully')
+                // 重置到空值，而不是 defaultValues
+                reset(emptyValues)
+                // onCloseForm?.()
+            },
+            onError: (err) => {
+                toast.error(isEditMode ? `Error updating cabin: ${err.message}` : `Error creating cabin: ${err.message}`)
+            },
+        })
     }
     const onerror = (errors: any) => {
         console.log('errors:', errors)
@@ -95,11 +102,11 @@ const CreateCabinForm: React.FC<createCabinFormProps> = ({ cabinConfig, onCloseF
     const handleSearch = () => { console.log('handleSearch') }
     return (
         <>
-            <Form onSubmit={handleSubmit(onSubmit, onerror)} >
-                <CabinForm onSearch={handleSearch} cabinConfig={cabinConfig} errors={errors} control={control} isPending={isPending}/>
+            <Form type={onCloseModal ? "modal" : "regular"} onSubmit={handleSubmit(onSubmit, onerror)} >
+                <CabinForm onSearch={handleSearch} cabinConfig={cabinConfig} errors={errors} control={control} isPending={isPending} />
                 <FormRowStyled>
                     {/* type is an HTML attribute! */}
-                    <Button variation="secondary" type="reset" onClick={onCloseForm}>
+                    <Button variation="secondary" type="reset" onClick={onCloseModal}>
                         Cancel
                     </Button>
                     <Button disabled={isPending} type="submit">

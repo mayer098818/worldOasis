@@ -15,18 +15,19 @@ type RenderComponentProps = {
     Component: React.ComponentType<any>;
     onSearch?: (value: string) => void;
     isPending?: boolean;
+    onInputBlur?: (name: string, value: any) => void
 };
 
-const renderComponent = ({ item, field, Component, onSearch,isPending }: RenderComponentProps) => {
+const renderComponent = ({ item, field, Component, onInputBlur, onSearch, isPending }: RenderComponentProps) => {
     if (item.type === 'input') {
         return <Component {...field}
             disabled={isPending}
-                          styles={{
-                              root:{
-                                  maxWidth:'316px'
-                              }
-                          }}
-                          {...item} />;
+            styles={{
+                root: {
+                    maxWidth: '316px'
+                }
+            }}
+            {...item} />;
     } else if (item.type === 'search') {
         return (
             <Component
@@ -59,17 +60,20 @@ const renderComponent = ({ item, field, Component, onSearch,isPending }: RenderC
             />
         );
     } else if (item.type === 'numberInput') {
-        // <InputNumber min={item.min} max={item.max} value={item.defaultValue} onChange={setValue} />
-        return <Component {...field}  disabled={isPending} styles={{
+        return <Component {...field} disabled={isPending} styles={{
             root: {
                 width: '318px',
             }
         }}
+            onBlur={() => {
+                field.onBlur()
+                onInputBlur?.(field.name, field.value)
+            }}
             {...item} />
-    }else if(item.type === 'textArea') {
-        return <Component {...field} disabled={isPending} autoSize={{ minRows: 2, maxRows: 3 }}/>
+    } else if (item.type === 'textArea') {
+        return <Component {...field} disabled={isPending} autoSize={{ minRows: 2, maxRows: 3 }} />
     }
-    else if (item.type==='upload') {
+    else if (item.type === 'upload') {
         return <Component
             fileList={field.value}
             beforeUpload={() => false}   // 阻止自动上传

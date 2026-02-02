@@ -1,12 +1,10 @@
 import Heading from "../ui/Heading";
 import Row from "../ui/Row";
-import { getCabins } from "../services/apiCabins";
 import CabinTable from "../features/cabins/CabinTable";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Spinner from "../ui/Spinner.tsx";
-import Button from "../ui/Button.tsx";
-import CreateCabinForm from "../features/cabins/CreateCabinForm.tsx";
-import { useState } from "react";
+import useCabins from "../features/cabins/useCabins.ts";
+import Empty from "antd/es/empty/index";
+import AddCabin from "../features/cabins/AddCabin.tsx";
 const cabinConfig = [{
   id: 'name', label: 'Cabin name', type: 'input', rules: {
     required: 'this field is required'
@@ -23,6 +21,10 @@ const cabinConfig = [{
 }, {
   id: 'discount', label: 'discount', type: 'numberInput', rules: {
     validate: (value: any, formValues: any) => {
+      console.log(Number(value), value, 'discount')
+      if (value === undefined || value === '' || value === null) {
+        return true;
+      }
       return Number(value) < Number(formValues.regularPrice) || 'discount should smaller than regularPrice '
     }
   }
@@ -35,31 +37,26 @@ const cabinConfig = [{
   }
 }]
 function Cabins() {
-  const [showForm, setShowForm] = useState(false);
-  const { data: cabins, isLoading } = useQuery({
-    queryKey: ["cabins"],
-    queryFn: getCabins,
-    refetchOnWindowFocus: true, // 默认 true
-  });
+  const { cabins, isLoading, error } = useCabins()
+
   if (isLoading) return <Spinner />
+  if (error) return <Empty />
   return (
     <>
       <Row type="horizontal">
         <Heading as="h1">All cabins</Heading>
         <p>Filter / Sort</p>
       </Row>
-      <Row>
-        <CabinTable cabins={cabins} cabinConfig={cabinConfig} />
-        <Button onClick={() => setShowForm(!showForm)}>Add New Cabin</Button>
-        {showForm && <CreateCabinForm cabinConfig={cabinConfig} onCloseForm={() => setShowForm(false)} />}
-      </Row>
+      {cabins && cabins.length > 0 &&
+        <Row>
+          <CabinTable cabins={cabins} cabinConfig={cabinConfig} />
+          {/* <Button onClick={() => setShowForm(!showForm)}>Add New Cabin</Button>
+          {showForm && <CreateCabinForm cabinConfig={cabinConfig} onCloseForm={() => setShowForm(false)} />} */}
+          <AddCabin cabinConfig={cabinConfig} />
+        </Row>
+      }
     </>
   );
 }
 
-export async function cabinsLoader() {
-  const queryClient = useQueryClient()
-  const data = await queryClient.prefetchQuery({ queryKey: ['cabins'], queryFn: getCabins })
-  return data
-}
 export default Cabins;

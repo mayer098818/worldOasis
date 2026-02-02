@@ -1,15 +1,14 @@
 import type { FormHTMLAttributes, PropsWithChildren } from "react";
 import styled, { css } from "styled-components";
 
-type FormVariant = "modal" | "default";
+type FormVariant = "modal" | "default" | "regular";
 
 type StyledFormProps = {
   $type: FormVariant;
 };
-
 const StyledForm = styled.form<StyledFormProps>`
   ${(props) =>
-    props.$type !== "modal" &&
+    props.$type === "regular" &&
     css`
       padding: 2.4rem 4rem;
 
