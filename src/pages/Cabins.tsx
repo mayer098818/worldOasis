@@ -42,7 +42,21 @@ function Cabins() {
   const { cabins, isLoading, error } = useCabins()
   const [searchParams] = useSearchParams()
   const filterValue = searchParams.get('discount') || 'all'
-  console.log(filterValue, 'filterValue')
+  const options=[{text:'all',value:'1'},{text:'with-discount',value:'2'},{text:'no-discount',value:'3'}]
+  // filter
+  let filterCabins;
+  if(filterValue === 'with-discount') {
+    filterCabins=cabins?.filter(cabin=>cabin.discount!=='0')
+  }else if(filterValue === 'no-discount') {
+    filterCabins=cabins?.filter(cabin=>cabin.discount===0)
+  }else{
+    filterCabins=cabins
+  }
+  // sort
+  const sortBy=searchParams.get('sortBy')||''
+  const [field,direction]=sortBy.split('-');
+  const modifier=direction==="asc"?1:-1
+  const sortedCabins=filterCabins?.sort((a,b)=>(a[field]-b[field])*modifier)
   if (isLoading) return <Spinner />
   if (error) return <Empty />
   return (
@@ -50,14 +64,15 @@ function Cabins() {
       <Row type="horizontal">
         <Heading as="h1">All cabins</Heading>
         {/* <p>Filter / Sort</p> */}
-        <CabinOperations />
+        <CabinOperations options={options} filterField='discount' />
       </Row>
-      {cabins && cabins.length > 0 &&
+      {sortedCabins && sortedCabins.length > 0 &&
         <Row>
-          <CabinTable cabins={cabins} cabinConfig={cabinConfig} />
+          <CabinTable cabins={sortedCabins} cabinConfig={cabinConfig} />
           <AddCabin cabinConfig={cabinConfig} />
         </Row>
       }
+      {sortedCabins && sortedCabins.length===0&&<Empty />}
     </>
   );
 }
