@@ -3,11 +3,10 @@ import styled from "styled-components";
 import Form from "../../ui/Form.tsx";
 import Button from "../../ui/Button.tsx";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createEditCabin } from "../../services/apiCabins.ts";
 import toast from "react-hot-toast";
 import CabinForm from "./CabinForm.tsx";
 import useCreateCabin from "./useCreateCabin.ts";
+import { useModal } from "../../ui/Modal.tsx";
 
 const FormRowStyled = styled.div`
   display: grid;
@@ -42,6 +41,8 @@ type createCabinFormProps = {
     cabinConfig: any
 }
 const CreateCabinForm: React.FC<createCabinFormProps> = ({ cabinConfig, onCloseModal, cabinData = {}, isEdit = false }) => {
+    const { close: closeModal } = useModal()
+
     const { id: editId, ...rest } = cabinData
     // 根据 editId 判断是编辑还是新增模式
     const isEditMode = Boolean(editId) || isEdit
@@ -89,7 +90,7 @@ const CreateCabinForm: React.FC<createCabinFormProps> = ({ cabinConfig, onCloseM
                 toast.success(isEditMode ? 'Cabin updated successfully' : 'Cabin created successfully')
                 // 重置到空值，而不是 defaultValues
                 reset(emptyValues)
-                // onCloseForm?.()
+                handleClose()
             },
             onError: (err) => {
                 toast.error(isEditMode ? `Error updating cabin: ${err.message}` : `Error creating cabin: ${err.message}`)
@@ -99,6 +100,7 @@ const CreateCabinForm: React.FC<createCabinFormProps> = ({ cabinConfig, onCloseM
     const onerror = (errors: any) => {
         console.log('errors:', errors)
     }
+    const handleClose = closeModal || onCloseModal
     const handleSearch = () => { console.log('handleSearch') }
     return (
         <>
@@ -106,7 +108,7 @@ const CreateCabinForm: React.FC<createCabinFormProps> = ({ cabinConfig, onCloseM
                 <CabinForm onSearch={handleSearch} cabinConfig={cabinConfig} errors={errors} control={control} isPending={isPending} />
                 <FormRowStyled>
                     {/* type is an HTML attribute! */}
-                    <Button variation="secondary" type="reset" onClick={onCloseModal}>
+                    <Button variation="secondary" type="reset" onClick={handleClose}>
                         Cancel
                     </Button>
                     <Button disabled={isPending} type="submit">

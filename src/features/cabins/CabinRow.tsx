@@ -1,14 +1,14 @@
 import styled from "styled-components";
 import { formatCurrency } from '../../utils/helpers.ts'
 import type { CabinProps } from "./CabinTable.tsx";
-import { deleteCabin } from "../../services/apiCabins.ts";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { useState } from "react";
 import CreateCabinForm from "./CreateCabinForm.tsx";
-import { Button } from "antd";
 import useDeleteCabin from "./useDeleteCabin.ts";
 import useCreateCabin from "./useCreateCabin.ts";
+import Modal from "../../ui/Modal.tsx";
+import ConfirmDelete from "../../ui/ConfirmDelete.tsx";
+import Menus from "../../ui/Menus.tsx";
+import { Ellipsis, BookCopy, Pencil, Trash } from 'lucide-react'
 
 const TableRow = styled.div`
   display: grid;
@@ -50,7 +50,6 @@ const Discount = styled.div`
   color: var(--color-green-700);
 `;
 const CabinRow = ({ cabin, cabinConfig }: { cabin: CabinProps, cabinConfig: any }) => {
-  const [isShowForm, setIsShowForm] = useState(false)
   const { isDeleting, deleteCabin } = useDeleteCabin()
   const { image, name, maxCapacity, regularPrice, discount, id: cabinId } = cabin;
   const { mutateForm, isPending } = useCreateCabin()
@@ -82,14 +81,37 @@ const CabinRow = ({ cabin, cabinConfig }: { cabin: CabinProps, cabinConfig: any 
         <span>&mdash;</span>
       )}
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: '4px', flexDirection: 'row', alignItems: 'center' }}>
-        <Button disabled={isPending} onClick={() => handleDuplicate(cabin)}>Duplicate</Button>
-        <Button onClick={() => { setIsShowForm((show) => !show) }}>Edit</Button>
-        <Button disabled={isDeleting} onClick={() => deleteCabin(cabinId)}>
-          {isDeleting ? 'Delete...' : 'Delete'}
-        </Button>
+        <Modal>
+          <Menus>
+            <Menus.Toggle id={cabinId}>
+              <Ellipsis />
+            </Menus.Toggle>
+            <Menus.List id={cabinId}>
+              <Menus.Button icon={<BookCopy />} onClick={() => handleDuplicate(cabin)}>
+                Duplicate
+              </Menus.Button>
+              <Modal.Open name='edit'>
+                <Menus.Button icon={<Pencil />}>Edit</Menus.Button>
+              </Modal.Open>
+              <Modal.Open name='delete'>
+                <Menus.Button icon={<Trash />}>Delete</Menus.Button>
+              </Modal.Open>
+            </Menus.List>
+            <Modal.Window name='edit'>
+              <CreateCabinForm isEdit={true} cabinConfig={cabinConfig} cabinData={cabin}  ></CreateCabinForm>
+            </Modal.Window>
+
+            <Modal.Window name="delete">
+              <ConfirmDelete resourceName={cabin.name} onConfirm={() => deleteCabin(cabinId)} disabled={isDeleting} />
+            </Modal.Window>
+
+          </Menus >
+        </Modal>
+
       </div>
     </TableRow>
-    {isShowForm && <CreateCabinForm isEdit={true} cabinConfig={cabinConfig} cabinData={cabin} onCloseForm={() => setIsShowForm(false)} ></CreateCabinForm>}
+
+
   </>
 }
 export default CabinRow
