@@ -10,6 +10,8 @@ import Login from "./pages/Login";
 import PageNotFound from "./pages/PageNotFound";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
+import BookingDetail from "./features/bookings/BookingDetail";
+import Checkin from "./pages/CheckIn";
 function App() {
   const router = createBrowserRouter([
     {
@@ -19,6 +21,8 @@ function App() {
         { index: true, element: <Navigate replace to="dashboard" /> },
         { path: '/dashboard', element: <Dashboard /> },
         { path: '/bookings', element: <Bookings /> },
+        { path: '/bookings/:bookingId', element: <BookingDetail /> },
+        { path: '/checkin/:bookingId', element: <Checkin /> },
         { path: '/cabins', element: <Cabins /> },
         { path: '/users', element: <Users /> },
         { path: '/settings', element: <Settings /> },

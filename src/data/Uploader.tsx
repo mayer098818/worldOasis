@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { isFuture, isPast, isToday } from "date-fns";
-import supabase from "../services/supabase";
-import Button from "../ui/Button";
+import supabase from "../services/superbase.ts";
+import Button from "../ui/Button.tsx";
 import { subtractDates } from "../utils/helpers.ts";
 
-import { bookings } from "./data-bookings";
-import { cabins } from "./data-cabins";
-import { guests } from "./data-guests";
+import { bookings } from "./data-bookings.ts";
+import { cabins } from "./data-cabins.ts";
+import { guests } from "./data-guests.ts";
 
 // const originalSettings = {
 //   minBookingLength: 3,
@@ -46,12 +46,12 @@ async function createBookings() {
     .from("guests")
     .select("id")
     .order("id");
-  const allGuestIds = guestsIds.map((cabin) => cabin.id);
+  const allGuestIds = guestsIds?.map((cabin) => cabin.id);
   const { data: cabinsIds } = await supabase
     .from("cabins")
     .select("id")
     .order("id");
-  const allCabinIds = cabinsIds.map((cabin) => cabin.id);
+  const allCabinIds = cabinsIds?.map((cabin) => cabin.id);
 
   const finalBookings = bookings.map((booking) => {
     // Here relying on the order of cabins, as they don't have and ID yet

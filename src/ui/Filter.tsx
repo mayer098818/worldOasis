@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import styled, { css } from "styled-components";
 
@@ -12,12 +11,12 @@ const StyledFilter = styled.div`
   gap: 0.4rem;
 `;
 
-const FilterButton = styled.button`
+const FilterButton = styled.button<{ $active?: boolean }>`
   background-color: var(--color-grey-0);
   border: none;
 
   ${(props) =>
-    props.active &&
+    props.$active &&
     css`
       background-color: var(--color-brand-600);
       color: var(--color-brand-50);
@@ -35,18 +34,34 @@ const FilterButton = styled.button`
     color: var(--color-brand-50);
   }
 `;
-const Filter = ({ filterField,options }) => {
+
+type FilterOption = {
+  value: string;
+  label: string;
+};
+
+type FilterProps = {
+  options: FilterOption[];
+  filterField: string;
+};
+
+const Filter = ({ options, filterField }: FilterProps) => {
   const [searchParams, setSearchParams] = useSearchParams()
-const currentFilter=searchParams.get(filterField)||options[0].text
+  const currentFilter = searchParams.get(filterField) || options.at(0)?.value || '';
   const handleClick = (value: string) => {
     searchParams.set(filterField, value)
     setSearchParams(searchParams)
   }
+  console.log(currentFilter, 'currentss')
   return (
     <StyledFilter>
-        {options?.map(option=>(
-        <FilterButton key={option.value} onClick={() => handleClick(option.text)} active={currentFilter===option.text} disabled={currentFilter===option.text}>{option.text}</FilterButton>
-        ))}
+      {options.map((option: FilterOption) => (
+        <FilterButton
+          key={option.value}
+          onClick={() => handleClick(option.value)}
+          $active={option.value === currentFilter}
+          disabled={option.value === currentFilter}>{option.label}</FilterButton>
+      ))}
     </StyledFilter>
   )
 }

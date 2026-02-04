@@ -80,9 +80,12 @@ function Menus({ children }: { children: React.ReactNode }) {
   const [position, setPosition] = useState<{ x: number, y: number } | null>({ x: 20, y: 20 })
   const close = () => setOpenId('')
   const open = setOpenId
-  return <MenusContext.Provider value={{ openId, open, close, position, setPosition }}>
-    <StyledMenu>{children}</StyledMenu>
-  </MenusContext.Provider>
+  return (
+    <MenusContext.Provider value={{ openId, open, close, position, setPosition }}>
+      <StyledMenu>{children}</StyledMenu>
+    </MenusContext.Provider>
+  )
+
 }
 function Toggle({ children, id }: { children: React.ReactNode, id: string }) {
   const { openId, open, close, setPosition } = useContext(MenusContext)!

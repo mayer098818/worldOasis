@@ -41,7 +41,7 @@ const StyledBody = styled.section`
   margin: 0.4rem 0;
 `;
 
-const Footer = styled.footer`
+const StyledFooter = styled.footer`
   background-color: var(--color-grey-50);
   display: flex;
   justify-content: center;
@@ -92,7 +92,13 @@ function Body({ data, render }: { data: any[], render: any }) {
 
   return <StyledBody>{data.map(render)}</StyledBody>;
 }
-
+function Footer({ children }: { children: React.ReactNode }) {
+  return (
+    <StyledFooter>
+      {children}
+    </StyledFooter>
+  )
+}
 Table.Header = Header;
 Table.Body = Body;
 Table.Row = Row;

@@ -42,21 +42,21 @@ function Cabins() {
   const { cabins, isLoading, error } = useCabins()
   const [searchParams] = useSearchParams()
   const filterValue = searchParams.get('discount') || 'all'
-  const options=[{text:'all',value:'1'},{text:'with-discount',value:'2'},{text:'no-discount',value:'3'}]
+  const options = [{ label: 'all', value: 'all' }, { label: 'with-discount', value: 'with-discount' }, { label: 'no-discount', value: 'no-discount' }]
   // filter
   let filterCabins;
-  if(filterValue === 'with-discount') {
-    filterCabins=cabins?.filter(cabin=>cabin.discount!=='0')
-  }else if(filterValue === 'no-discount') {
-    filterCabins=cabins?.filter(cabin=>cabin.discount===0)
-  }else{
-    filterCabins=cabins
+  if (filterValue === 'with-discount') {
+    filterCabins = cabins?.filter(cabin => cabin.discount !== '0')
+  } else if (filterValue === 'no-discount') {
+    filterCabins = cabins?.filter(cabin => cabin.discount === 0)
+  } else {
+    filterCabins = cabins
   }
   // sort
-  const sortBy=searchParams.get('sortBy')||''
-  const [field,direction]=sortBy.split('-');
-  const modifier=direction==="asc"?1:-1
-  const sortedCabins=filterCabins?.sort((a,b)=>(a[field]-b[field])*modifier)
+  const sortBy = searchParams.get('sortBy') || ''
+  const [field, direction] = sortBy.split('-');
+  const modifier = direction === "asc" ? 1 : -1
+  const sortedCabins = filterCabins?.sort((a, b) => (a[field] - b[field]) * modifier)
   if (isLoading) return <Spinner />
   if (error) return <Empty />
   return (
@@ -72,7 +72,7 @@ function Cabins() {
           <AddCabin cabinConfig={cabinConfig} />
         </Row>
       }
-      {sortedCabins && sortedCabins.length===0&&<Empty />}
+      {sortedCabins && sortedCabins.length === 0 && <Empty />}
     </>
   );
 }
