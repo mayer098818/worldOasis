@@ -8,6 +8,7 @@ import Checkbox from "../ui/Checkbox";
 import { useState } from "react";
 import useLogin from "../features/authentication/useLogin";
 import Spinner from "../ui/Spinner";
+import { Link } from "react-router-dom";
 
 
 const LoginLayout = styled.main`
@@ -38,6 +39,15 @@ const ButtonWrapper = styled.div`
 const Box = styled.div`
 padding-top:4px;
 `
+const LoginLink = styled.div`
+  display:flex;
+  justify-content:end;
+  margin-top:1.4rem;
+  color: var(--color-grey-700);
+  &:hover {
+    color: var(--color-brand-600);
+  }
+`;
 const cabinConfig = [
   {
     id: 'email', label: 'Email', type: 'input', rules: {
@@ -74,6 +84,11 @@ function Login() {
       <Box>
         <Checkbox checked={rememberMe} onChange={() => setRememberMe(!rememberMe)} id='remember-me'>Remember me</Checkbox>
       </Box>
+      <LoginLink >
+        <Link to="/signup">
+          Don't have an account? Sign up here
+        </Link>
+      </LoginLink>
       <ButtonWrapper>
         <Button variation="primary" >Login</Button>
       </ButtonWrapper>

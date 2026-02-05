@@ -13,6 +13,7 @@ import { Toaster } from "react-hot-toast";
 import BookingDetail from "./features/bookings/BookingDetail";
 import Checkin from "./pages/CheckIn";
 import ProtectedRoute from "./ui/ProtectedRoute";
+import Signup from "./features/authentication/Signup";
 function App() {
   const router = createBrowserRouter([
     {
@@ -27,12 +28,17 @@ function App() {
         { path: '/cabins', element: <Cabins /> },
         { path: '/users', element: <Users /> },
         { path: '/settings', element: <Settings /> },
-        { path: '/account', element: <Account /> }
+        { path: '/account', element: <Account /> },
+
       ]
     },
     {
       path: 'login',
       element: <Login />
+    },
+    {
+      path: 'signup',
+      element: <Signup />
     },
     {
       path: '*',
