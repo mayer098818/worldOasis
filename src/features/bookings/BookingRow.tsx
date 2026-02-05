@@ -12,6 +12,7 @@ import Modal from "../../ui/Modal.tsx";
 import ConfirmDelete from "../../ui/ConfirmDelete.tsx";
 import useDeleteBooking from "./useDeleteBooking.ts";
 import { useNavigate } from "react-router-dom";
+import useCheckout from "../check-in-out/useCheckout.ts";
 
 const Cabin = styled.div`
   font-size: 1.6rem;
@@ -62,6 +63,7 @@ function BookingRow({
   console.log(status, 'status')
   const navigate = useNavigate()
   const { deleteBookingMuate, isDeleting } = useDeleteBooking()
+  const { checkout, isCheckingOut } = useCheckout()
   return (
     <Table.Row>
       <Cabin>{cabinName}</Cabin>
@@ -99,8 +101,11 @@ function BookingRow({
               <Menus.Button icon={<PencilLine />} onClick={() => navigate(`/checkin/${bookingId}`)}>Check in</Menus.Button>
             }
             {status === 'checked-in' &&
-              <Menus.Button icon={<LogOut />}>
-                Check out
+              <Menus.Button icon={<LogOut />} onClick={() => {
+                checkout({ bookingId })
+                navigate('/')
+              }}>
+                Check out{bookingId}
               </Menus.Button>
             }
             <Modal.Open name='delete'>
@@ -112,7 +117,7 @@ function BookingRow({
         </Menus>
 
         <Modal.Window name='delete'>
-          <ConfirmDelete resourceName='bookings' onConfirm={() => deleteBookingMuate(bookingId)} disabled={isDeleting} />
+          <ConfirmDelete resourceName='booking' onConfirm={() => deleteBookingMuate(bookingId)} disabled={isDeleting} />
         </Modal.Window>
       </Modal>
     </Table.Row>

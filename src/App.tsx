@@ -12,11 +12,12 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
 import BookingDetail from "./features/bookings/BookingDetail";
 import Checkin from "./pages/CheckIn";
+import ProtectedRoute from "./ui/ProtectedRoute";
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: < AppLayout />,
+      element: <ProtectedRoute><AppLayout /></ProtectedRoute>,
       children: [
         { index: true, element: <Navigate replace to="dashboard" /> },
         { path: '/dashboard', element: <Dashboard /> },

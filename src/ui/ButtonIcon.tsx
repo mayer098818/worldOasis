@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const ButtonIcon = styled.button`
+const StyledButton = styled.button`
   background: none;
   border: none;
   padding: 0.6rem;
@@ -17,5 +17,7 @@ const ButtonIcon = styled.button`
     color: var(--color-brand-600);
   }
 `;
-
+function ButtonIcon({ children, disabled, onClick }: { children: React.ReactNode, disabled?: boolean, onClick?: () => void }) {
+  return <StyledButton disabled={disabled} onClick={onClick}>{children}</StyledButton>;
+}
 export default ButtonIcon;

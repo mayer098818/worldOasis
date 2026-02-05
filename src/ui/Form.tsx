@@ -1,7 +1,7 @@
 import type { FormHTMLAttributes, PropsWithChildren } from "react";
 import styled, { css } from "styled-components";
 
-type FormVariant = "modal" | "default" | "regular";
+type FormVariant = "modal" | "default" | "regular" | 'login';
 
 type StyledFormProps = {
   $type: FormVariant;
@@ -22,6 +22,15 @@ const StyledForm = styled.form<StyledFormProps>`
     props.$type === "modal" &&
     css`
       width: 80rem;
+    `}
+    
+  ${(props) =>
+    props.$type === "login" &&
+    css`
+      padding: 2.4rem 4rem;
+      background-color: transparent;
+      border: none;
+      border-radius: var(--border-radius-md);
     `}
     
   overflow: hidden;

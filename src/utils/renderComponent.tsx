@@ -24,7 +24,7 @@ const renderComponent = ({ item, field, Component, onInputBlur, onSearch, isPend
             disabled={isPending}
             styles={{
                 root: {
-                    maxWidth: '316px'
+                    minWidth: '318px'
                 }
             }}
             {...item} />;
@@ -71,7 +71,20 @@ const renderComponent = ({ item, field, Component, onInputBlur, onSearch, isPend
             }}
             {...item} />
     } else if (item.type === 'textArea') {
-        return <Component {...field} disabled={isPending} autoSize={{ minRows: 2, maxRows: 3 }} />
+        return <Component {...field} disabled={isPending} autoSize={{ minRows: 2, maxRows: 3 }} styles={{
+            root: {
+                width: '318px',
+            }
+        }} />
+    } else if (item.type === 'inputPassword') {
+        return <Component {...field}
+            disabled={isPending}
+            styles={{
+                root: {
+                    minWidth: '318px',
+                }
+            }}
+            {...item} />
     }
     else if (item.type === 'upload') {
         return <Component
