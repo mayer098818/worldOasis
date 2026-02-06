@@ -32,15 +32,19 @@ const Error = styled.span<{ $type: string }>`
   ${(props) =>
     props.$type === "vertical" &&
     css`
-       margin-right:260px;
-        margin-top:10px;
+      /* 垂直布局时，让错误信息占满一行，左对齐且不换行 */
+      align-self: flex-start;
+      margin-top: 0.8rem;
+      white-space: nowrap;
     `}
 
 `;
 const CabinFormRow = ({ item, children, error, type = 'horizontal' }: { item: any, children: any, error: any, type?: string }) => {
   return (
     <FormRowStyled $type={type}>
-      <Label $type={type} htmlFor={children?.props?.id as string}>{item.label}</Label>
+      <Label $type={type} htmlFor={children?.props?.id as string}>{item.label}
+        {item.rules?.required && <span style={{ color: 'red' }}>*</span>}
+      </Label>
       {children}
       <Error $type={type}>{error?.message}</Error>
     </FormRowStyled>

@@ -40,7 +40,6 @@ const settingsConfig = [
 ]
 function Settings() {
   const { settings, isLoading, error } = useSettings()
-  console.log(settings, 'settings')
   const { control, reset } = useForm({ defaultValues: {} })
   const { editSettings, isPending } = useEditSettings()
   const handleBlur = (name: string, value: any) => {

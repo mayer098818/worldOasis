@@ -4,6 +4,8 @@ import ButtonIcon from "./ButtonIcon";
 import { useNavigate } from "react-router-dom";
 import { Moon, SunMedium, User } from "lucide-react";
 // import DarkModeToggle from "./DarkModeToggle";
+import { useDarkMode } from "../hooks/useDarkMode";
+import UserAvatar from "../features/authentication/UserAvatar";
 
 const StyledHeaderMenu = styled.ul`
   display: flex;
@@ -13,16 +15,23 @@ const StyledHeaderMenu = styled.ul`
 
 function HeaderMenu() {
     const navigate = useNavigate();
+    const { isDarkMode, toggleDarkMode } = useDarkMode();
 
     return (
         <StyledHeaderMenu>
-            <li>
-                <ButtonIcon onClick={() => navigate("/account")}>
-                    <User />
+            <li onClick={() => navigate("/account")}>
+                <ButtonIcon >
+                    <UserAvatar />
                 </ButtonIcon>
             </li>
             <li>
-                <Moon />
+                <ButtonIcon
+                    onClick={toggleDarkMode}
+                    aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+                    title={isDarkMode ? "Light mode" : "Dark mode"}
+                >
+                    {isDarkMode ? <SunMedium color="var(--color-grey-600)" /> : <Moon color="var(--color-grey-600)" />}
+                </ButtonIcon>
             </li>
             <li>
                 <Logout />

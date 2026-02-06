@@ -52,7 +52,6 @@ const Filter = ({ options, filterField }: FilterProps) => {
     searchParams.set(filterField, value)
     setSearchParams(searchParams)
   }
-  console.log(currentFilter, 'currentss')
   return (
     <StyledFilter>
       {options.map((option: FilterOption) => (

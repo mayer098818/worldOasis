@@ -3,6 +3,9 @@ import CabinForm from "../cabins/CabinForm"
 import Button from "../../ui/Button"
 import styled from "styled-components"
 import Form from "../../ui/Form"
+import useSignup from "./useSignup"
+import SpinnerMini from "../../ui/SpinnerMini"
+// import { useEffect, useState } from "react"
 const LoginLayout = styled.main`
   min-height: 100vh;
   display: grid;
@@ -45,37 +48,50 @@ const cabinConfig: any[] = [
     {
         id: 'password',
         label: 'Password',
-        type: 'input',
-        rules: { required: 'Password is required' }
+        type: 'inputPassword',
+        rules: {
+            required: 'Password is required', validate: (value: string) => {
+                if (value.length < 6) {
+                    return 'Password must be at least 6 characters'
+                }
+                return true
+            }
+        }
     },
     {
         id: 'passwordConfirm',
         label: 'Password Confirm',
-        type: 'input',
-        rules: { required: 'Password Confirm is required' }
+        type: 'inputPassword',
+        rules: {
+            required: 'Password Confirm is required',
+            validate: (value: string, formValues: any) => {
+                if (value.length < 6) {
+                    return 'Password must be at least 6 characters'
+                }
+                if (value !== formValues.password) {
+                    return 'Passwords do not match'
+                }
+                return true
+            }
+        }
     },
 
 ]
 const Signup = () => {
-    const { control, handleSubmit, formState: { errors } } = useForm()
-    const onSubmit = (data) => {
-        console.log(data, 'onSubmit')
+    const { control, handleSubmit, formState: { errors }, reset } = useForm()
+    const { signup, isSignupPending } = useSignup()
+    const onSubmit = (data: any) => {
+        const { passwordConfirm, ...rest } = data
+        signup(rest, { onSettled: () => reset() })
     }
-    // return (
-    //     <Form type="regular" onSubmit={handleSubmit(onSubmit)}>
-    //         <CabinForm cabinConfig={cabinConfig} control={control} errors={errors} />
-    //         <Box>
-    //             {/* <Button>Cancel</Button> */}
-    //             <Button variation='primary'>Signup</Button>
-    //         </Box>
-    //     </Form>
-    // )
     return (
         <LoginLayout>
             <Form type="login" onSubmit={handleSubmit(onSubmit)}>
-                <CabinForm type="vertical" cabinConfig={cabinConfig} errors={errors} control={control}></CabinForm>
+                <CabinForm type="vertical" cabinConfig={cabinConfig} isPending={isSignupPending} errors={errors} control={control}></CabinForm>
                 <ButtonWrapper>
-                    <Button variation="primary" >Create an account</Button>
+                    <Button variation="primary" disabled={isSignupPending}>
+                        {!isSignupPending ? 'Create an account' : <SpinnerMini />}
+                    </Button>
                 </ButtonWrapper>
             </Form>
         </LoginLayout>

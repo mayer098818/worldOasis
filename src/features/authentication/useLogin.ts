@@ -9,7 +9,6 @@ const useLogin = () => {
         mutationKey: ['user'],
         mutationFn: ({ email, password }: { email: string, password: string }) => LoginApi({ email, password }),
         onSuccess: (data) => {
-            console.log(data, 'Nadaodata')
             queryClient.setQueryData(['user'], data.user)
             navigate('/dashboard', { replace: true });
         },

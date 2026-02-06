@@ -10,10 +10,9 @@ const FullPage = styled.div`
   justify-content: center;
 `;
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-    const { user, isLoading, isAuthenticated } = useUser()
-    console.log(user, isAuthenticated, 'user')
-    if (isLoading) return <FullPage><Spinner /></FullPage>
-    if (!isLoading && !isAuthenticated) return <Navigate to="/login" />
-    if (isAuthenticated) return children
+  const { isLoading, isAuthenticated } = useUser()
+  if (isLoading) return <FullPage><Spinner /></FullPage>
+  if (!isLoading && !isAuthenticated) return <Navigate to="/login" />
+  if (isAuthenticated) return children
 }
 export default ProtectedRoute

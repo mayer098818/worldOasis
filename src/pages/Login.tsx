@@ -70,9 +70,7 @@ function Login() {
   const [rememberMe, setRememberMe] = useState(false)
   const { handleSubmit, formState: { errors }, control, reset } = useForm()
   const { login, isLogining } = useLogin()
-  const onSubmit = (data: any) => {
-    console.log(data, 'data')
-    const { email, password } = data
+  const onSubmit = ({ email, password }) => {
     login({ email, password }, {
       onSettled: () => { reset({ email: '', password: '' }) }
     })

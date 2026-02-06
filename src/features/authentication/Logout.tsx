@@ -8,7 +8,7 @@ function Logout() {
 
     return (
         <ButtonIcon disabled={isLogouting} onClick={logout}>
-            {!isLogouting ? <LogOut /> : <SpinnerMini />}
+            {!isLogouting ? <LogOut color="var(--color-grey-600)" /> : <SpinnerMini color="var(--color-grey-600)" />}
         </ButtonIcon>
     );
 }

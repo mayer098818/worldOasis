@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import type { ButtonHTMLAttributes, PropsWithChildren } from "react";
 
 const StyledButton = styled.button`
   background: none;
@@ -17,7 +18,9 @@ const StyledButton = styled.button`
     color: var(--color-brand-600);
   }
 `;
-function ButtonIcon({ children, disabled, onClick }: { children: React.ReactNode, disabled?: boolean, onClick?: () => void }) {
-  return <StyledButton disabled={disabled} onClick={onClick}>{children}</StyledButton>;
+type ButtonIconProps = PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>;
+
+function ButtonIcon({ children, ...props }: ButtonIconProps) {
+  return <StyledButton {...props}>{children}</StyledButton>;
 }
 export default ButtonIcon;

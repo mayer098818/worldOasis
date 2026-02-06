@@ -75,7 +75,6 @@ const CreateCabinForm: React.FC<createCabinFormProps> = ({ cabinConfig, onCloseM
 
     const { mutateForm, isPending } = useCreateCabin()
     const onSubmit = (data: any) => {
-        console.log(data, 'data')
         // 处理图片：如果是编辑模式且图片是 URL 字符串，直接使用；否则取 fileList 的第一个
         const image = Array.isArray(data.image) && data.image[0]?.url
             ? data.image[0].url

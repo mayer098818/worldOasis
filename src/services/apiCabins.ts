@@ -11,7 +11,6 @@ export async function deleteCabin(id: string) {
     .delete()
     .eq('id', id)
   if (error) throw new Error(error.message)
-  console.log(data, 'data')
   return data
 }
 
