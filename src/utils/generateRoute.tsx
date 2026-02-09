@@ -8,6 +8,8 @@ import { lazy } from 'react';
 import { House, BookOpen, Settings, UsersRound, Check, Building } from 'lucide-react';
 import Account from '../pages/Account';
 import Checkin from '../pages/Checkin';
+import authLoader from "./authLoader.ts";
+import ErrorFallback from "../ui/ErrorFallback.tsx";
 
 type MenuItem = {
     id: number;
@@ -32,7 +34,9 @@ export default function generateRoute(menus: MenuItem[]) {
     return [
         {
             path: '/',
-            element: <ProtectedRoute><AppLayout /></ProtectedRoute>,
+            element: <AppLayout/>,
+            errorElement: <ErrorFallback/>,
+            loader:authLoader,
             children: [
                 { index: true, element: <Navigate replace to="dashboard" /> },
                 // 动态生成菜单路由

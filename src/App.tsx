@@ -15,12 +15,9 @@ function App() {
     enabled: !!user?.id,
 
   })
-
-  const routes = React.useMemo(
-    () => generateRoute(menus ?? []),
-    [menus]
-  );
-  const router = React.useMemo(() => createBrowserRouter(routes), [routes]);
+console.log(menus,'menus')
+  const routes = generateRoute(menus ?? [])
+  const router = createBrowserRouter(routes)
   if (isLoadingUser || isLoadingMenus) return <Spinner />;
   return (
     <>

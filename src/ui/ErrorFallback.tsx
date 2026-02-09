@@ -29,3 +29,7 @@ const Box = styled.div`
     color: var(--color-grey-500);
   }
 `;
+const ErrorFallback: React.FunctionComponent = () => {
+    return null
+}
+export default ErrorFallback;
