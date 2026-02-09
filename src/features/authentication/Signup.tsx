@@ -5,6 +5,8 @@ import styled from "styled-components"
 import Form from "../../ui/Form"
 import useSignup from "./useSignup"
 import SpinnerMini from "../../ui/SpinnerMini"
+import { useNavigate } from "react-router-dom"
+import toast from "react-hot-toast"
 // import { useEffect, useState } from "react"
 const LoginLayout = styled.main`
   min-height: 100vh;
@@ -80,9 +82,21 @@ const cabinConfig: any[] = [
 const Signup = () => {
     const { control, handleSubmit, formState: { errors }, reset } = useForm()
     const { signup, isSignupPending } = useSignup()
+    const navigate = useNavigate()
     const onSubmit = (data: any) => {
         const { passwordConfirm, ...rest } = data
-        signup(rest, { onSettled: () => reset() })
+        signup(rest, {
+            onSettled: () => reset(),
+            onSuccess: () => {
+                toast.success('Account created successfully.')
+                navigate('/login', {
+                    state: {
+                        email: rest.email,
+                        from: 'signup'
+                    }
+                })
+            }
+        })
     }
     return (
         <LoginLayout>

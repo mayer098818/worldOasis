@@ -1,7 +1,10 @@
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
-import { House,BookOpen,Settings,UsersRound  } from 'lucide-react';
-
+import { menuConfig } from "../utils/generateRoute";
+import { getUserMenus } from "../services/apiMenu";
+import useUser from "../features/authentication/useUser";
+import { useQuery } from "@tanstack/react-query";
+import Spinner from "./Spinner";
 const NavList = styled.ul`
   display: flex;
   flex-direction: column;
@@ -49,42 +52,49 @@ const StyledNavLink = styled(NavLink)`
 
 
 function MainNav() {
+  const { user, isLoading: isLoadingUser } = useUser();
+
+  // 先等待用户加载完成
+  if (isLoadingUser || !user) return <Spinner />;
+
+  // 只有 user.id 存在时才触发查询
+  const { data: menus, isLoading: isLoadingMenus } = useQuery({
+    queryKey: ['menus', user.id], // user.id 变化时刷新
+    queryFn: () => getUserMenus(user.id),
+    enabled: !!user.id
+  });
+
+  if (isLoadingMenus) return <Spinner />;
+
+  const menuList = menus?.map(menu => {
+    const config = menuConfig.find(config => config.name === menu.name);
+    if (!config) return null;
+    let path = config.path;
+    if (menu.name === 'checkin') {
+      path = `/checkin/${menu.bookingId}`;
+    }
+    return {
+      path,
+      icon: config.icon,
+      label: config.label
+    };
+  }).filter(Boolean);
+
   return (
     <nav>
       <NavList>
-        <li>
-          <StyledNavLink to="/dashboard">
-            <House size={12}/>
-            <span>Home</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/bookings">
-            <BookOpen  />
-            <span>Bookings</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/cabins">
-            <BookOpen  />
-            <span>Cabins</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/users">
-            <UsersRound  />
-            <span>Users</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/settings">
-            <Settings  />
-            <span>Settings</span>
-          </StyledNavLink>
-        </li>
+        {menuList?.map(item => (
+          <li key={item.path}>
+            <StyledNavLink to={item.path}>
+              {item.icon}
+              <span>{item.label}</span>
+            </StyledNavLink>
+          </li>
+        ))}
       </NavList>
     </nav>
   );
 }
+
 
 export default MainNav;

@@ -20,6 +20,40 @@ export async function getCurrentUser() {
     return data?.user;
 }
 
+// 根据用户 id 获取其角色信息
+export async function getUserRole(userId: string) {
+    // 1. 先从 users 表中获取用户的 role_id
+    const { data: user, error: userError } = await supabase
+        .from("users")
+        .select("role_id")
+        .eq("id", userId)
+        .single();
+
+    if (userError) throw new Error(userError.message);
+
+    const roleId = user?.role_id;
+    if (!roleId) return null;
+
+    // 2. 再根据 role_id 从 roles 表中获取角色详情
+    const { data: role, error: roleError } = await supabase
+        .from("roles")
+        .select("*")
+        .eq("id", roleId)
+        .single();
+
+    if (roleError) throw new Error(roleError.message);
+
+    return role;
+}
+
+export async function getAllUsers() {
+    const { data, error } = await supabase
+        .from("users")
+        .select("*");
+    if (error) throw new Error(error.message);
+    return data;
+}
+
 export async function logout() {
     const { error } = await supabase.auth.signOut();
     if (error) throw new Error(error.message);

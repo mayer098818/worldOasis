@@ -54,12 +54,20 @@ function CheckinBooking({ booking }) {
           extrasPrice: optionalBreakfastPrice,
           totalPrice: totalPrice + optionalBreakfastPrice,
         }
+      }, {
+        onSuccess() {
+          navigate('/')
+        },
       })
     }
     else {
       checkin({
         bookingId, breakfast: {
         }
+      }, {
+        onSuccess() {
+          navigate('/')
+        },
       })
     }
 

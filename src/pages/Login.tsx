@@ -5,10 +5,10 @@ import { useForm } from "react-hook-form";
 import CabinForm from "../features/cabins/CabinForm";
 import Button from "../ui/Button";
 import Checkbox from "../ui/Checkbox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useLogin from "../features/authentication/useLogin";
 import Spinner from "../ui/Spinner";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 
 const LoginLayout = styled.main`
@@ -67,9 +67,14 @@ const cabinConfig = [
   }
 ]
 function Login() {
-  const [rememberMe, setRememberMe] = useState(false)
   const { handleSubmit, formState: { errors }, control, reset } = useForm()
   const { login, isLogining } = useLogin()
+  const { state } = useLocation()
+  useEffect(() => {
+    if (state?.email && state.from === 'signup') {
+      reset({ email: state.email })
+    }
+  }, [state, reset])
   const onSubmit = ({ email, password }) => {
     login({ email, password }, {
       onSettled: () => { reset({ email: '', password: '' }) }
@@ -79,9 +84,6 @@ function Login() {
   return <LoginLayout>
     <Form type="login" onSubmit={handleSubmit(onSubmit)}>
       <CabinForm type="vertical" cabinConfig={cabinConfig} isPending={isLogining} errors={errors} control={control}></CabinForm>
-      <Box>
-        <Checkbox checked={rememberMe} onChange={() => setRememberMe(!rememberMe)} id='remember-me'>Remember me</Checkbox>
-      </Box>
       <LoginLink >
         <Link to="/signup">
           Don't have an account? Sign up here

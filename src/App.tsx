@@ -1,50 +1,27 @@
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
-import AppLayout from "./ui/AppLayout";
-import Dashboard from "./pages/Dashboard";
-import Bookings from "./pages/Bookings";
-import Cabins from "./pages/Cabins";
-import Users from "./pages/Users";
-import Settings from "./pages/Settings";
-import Account from "./pages/Account";
-import Login from "./pages/Login";
-import PageNotFound from "./pages/PageNotFound";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
-import BookingDetail from "./features/bookings/BookingDetail";
-import Checkin from "./pages/CheckIn";
-import ProtectedRoute from "./ui/ProtectedRoute";
-import Signup from "./features/authentication/Signup";
+import useUser from "./features/authentication/useUser";
+import { useQuery } from "@tanstack/react-query";
+import { getUserMenus } from "./services/apiMenu";
+import generateRoute from "./utils/generateRoute";
+import React from "react";
+import Spinner from "./ui/Spinner";
 function App() {
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <ProtectedRoute><AppLayout /></ProtectedRoute>,
-      children: [
-        { index: true, element: <Navigate replace to="dashboard" /> },
-        { path: '/dashboard', element: <Dashboard /> },
-        { path: '/bookings', element: <Bookings /> },
-        { path: '/bookings/:bookingId', element: <BookingDetail /> },
-        { path: '/checkin/:bookingId', element: <Checkin /> },
-        { path: '/cabins', element: <Cabins /> },
-        { path: '/users', element: <Users /> },
-        { path: '/settings', element: <Settings /> },
-        { path: '/account', element: <Account /> },
+  const { user, isLoading: isLoadingUser } = useUser()
+  const { data: menus, isLoading: isLoadingMenus } = useQuery({
+    queryKey: ['menus'],
+    queryFn: () => getUserMenus(user!.id),
+    enabled: !!user?.id,
 
-      ]
-    },
-    {
-      path: 'login',
-      element: <Login />
-    },
-    {
-      path: 'signup',
-      element: <Signup />
-    },
-    {
-      path: '*',
-      element: <PageNotFound />
-    }
-  ])
+  })
+
+  const routes = React.useMemo(
+    () => generateRoute(menus ?? []),
+    [menus]
+  );
+  const router = React.useMemo(() => createBrowserRouter(routes), [routes]);
+  if (isLoadingUser || isLoadingMenus) return <Spinner />;
   return (
     <>
       <ReactQueryDevtools initialIsOpen={true} />

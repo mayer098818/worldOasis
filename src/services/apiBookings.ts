@@ -77,11 +77,16 @@ export async function getStaysAfterDate(date) {
 
 // Activity means that there is a check in or a check out today
 export async function getStaysTodayActivity() {
+  const todayStart = getToday();
+  const todayEnd = getToday({ end: true });
+
+  // Query for unconfirmed bookings starting today OR checked-in bookings ending today
+  // Use date range (gte and lte) instead of exact match (eq) to handle time differences
   const { data, error } = await supabase
     .from("bookings")
     .select("*, guests(fullName, nationality, countryFlag)")
     .or(
-      `and(status.eq.unconfirmed,startDate.eq.${getToday()}),and(status.eq.checked-in,endDate.eq.${getToday()})`
+      `and(status.eq.unconfirmed,startDate.gte.${todayStart},startDate.lte.${todayEnd}),and(status.eq.checked-in,endDate.gte.${todayStart},endDate.lte.${todayEnd})`
     )
     .order("created_at");
 
@@ -97,6 +102,7 @@ export async function getStaysTodayActivity() {
 }
 
 export async function updateBooking(id, obj) {
+  console.log(id, 'aadss')
   const { data, error } = await supabase
     .from("bookings")
     .update(obj)
