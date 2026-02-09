@@ -24,7 +24,6 @@ type MenuConfig = {
 export const menuConfig: MenuConfig[] = [
     { name: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: <House size={12} />, component: lazy(() => import('../pages/Dashboard')) },
     { name: 'bookings', path: '/bookings', label: 'Bookings', icon: <BookOpen size={12} />, component: lazy(() => import('../pages/Bookings')) },
-
     { name: 'cabins', path: '/cabins', label: 'Cabins', icon: <Building size={12} />, component: lazy(() => import('../pages/Cabins')), },
     { name: 'settings', path: '/settings', label: 'Settings', icon: <Settings size={12} />, component: lazy(() => import('../pages/Settings')), },
     { name: 'users', path: '/users', label: 'Users', icon: <UsersRound size={12} />, component: lazy(() => import('../pages/Users')), },
