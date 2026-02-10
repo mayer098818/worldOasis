@@ -87,13 +87,11 @@ const renderComponent = ({ item, field, Component, onInputBlur, onSearch, isPend
             {...item} />
     }
     else if (item.type === 'upload') {
-        console.log(field.value, 'fileList')
         return <Component
             {...field}
             fileList={field.value}
             beforeUpload={() => false}   // 阻止自动上传
             onChange={({ fileList }: { fileList: any[] }) => {
-                console.log(fileList, 'fileList onchange')
                 field.onChange(fileList);
             }}
             {...item} >

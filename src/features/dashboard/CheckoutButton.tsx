@@ -5,7 +5,6 @@ import useCheckout from "../check-in-out/useCheckout";
 function CheckoutButton({ bookingId }: { bookingId: string }) {
     const queryClient = useQueryClient()
     const { checkout, isCheckingOut } = useCheckout();
-    console.log(bookingId, 'bookingId')
     return (
         <Button
             variation="primary"

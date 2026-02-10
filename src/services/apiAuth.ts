@@ -70,7 +70,6 @@ export async function signup({ fullName, email, password }: { fullName: string, 
             },
         },
     });
-    console.log(data, 'signup data')
     if (error) throw new Error(error.message);
     return data;
 }

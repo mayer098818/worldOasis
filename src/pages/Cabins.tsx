@@ -23,7 +23,6 @@ const cabinConfig = [{
 }, {
   id: 'discount', label: 'discount', type: 'numberInput', rules: {
     validate: (value: any, formValues: any) => {
-      console.log(Number(value), value, 'discount')
       if (value === undefined || value === '' || value === null) {
         return true;
       }

@@ -74,7 +74,6 @@ function BookingRow({
     "checked-in": "green",
     "checked-out": "silver",
   };
-  console.log(status, 'status')
   const navigate = useNavigate()
   const { deleteBookingMuate, isDeleting } = useDeleteBooking()
   const { checkout } = useCheckout()

@@ -12,7 +12,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import useBooking from "./useBooking";
 import Spinner from "../../ui/Spinner";
 import Empty from "../../ui/Empty";
-import Modal from "../../ui/Modal.tsx";
+import Modal, { useModal } from "../../ui/Modal.tsx";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 import useDeleteBooking from "./useDeleteBooking.ts";
 
@@ -37,6 +37,7 @@ function BookingDetail() {
   const { deleteBookingMuate, isDeleting } = useDeleteBooking()
   const navigate = useNavigate()
   const moveBack = useMoveBack()
+  const { close } = useModal()
   if (isPending) return <Spinner />
   if (Object.keys(booking).length === 0) return <Empty resourceName={`Booking ${bookingId}`} />
 
@@ -71,7 +72,12 @@ function BookingDetail() {
             Back
           </Button>
           <Modal.Window name='delete'>
-            <ConfirmDelete resourceName='booking' onConfirm={() => deleteBookingMuate(bookingId!)} disabled={isDeleting} />
+            <ConfirmDelete resourceName='booking' onConfirm={() => deleteBookingMuate(bookingId!, {
+              onSuccess: () => {
+                close()
+                navigate('/bookings')
+              }
+            })} disabled={isDeleting} />
           </Modal.Window>
         </ButtonGroup>
       </Modal>

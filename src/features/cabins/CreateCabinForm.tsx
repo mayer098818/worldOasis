@@ -96,14 +96,11 @@ const CreateCabinForm: React.FC<createCabinFormProps> = ({ cabinConfig, onCloseM
             },
         })
     }
-    const onerror = (errors: any) => {
-        console.log('errors:', errors)
-    }
     const handleClose = closeModal || onCloseModal
     const handleSearch = () => { console.log('handleSearch') }
     return (
         <>
-            <Form type={onCloseModal ? "modal" : "regular"} onSubmit={handleSubmit(onSubmit, onerror)} >
+            <Form type={onCloseModal ? "modal" : "regular"} onSubmit={handleSubmit(onSubmit)} >
                 <CabinForm onSearch={handleSearch} cabinConfig={cabinConfig} errors={errors} control={control} isPending={isPending} />
                 <FormRowStyled>
                     {/* type is an HTML attribute! */}
