@@ -49,7 +49,7 @@ export default function generateRoute(menus: MenuItem[]): RouteObject[] {
         {
             path: '/',
             element: <AppLayout />,
-            errorElement: <ErrorFallback />,
+            errorElement: <ErrorFallback error={new Error('Something went wrong')} resetErrorBoundary={() => { }} />,
             loader: authLoader,
             children: [
                 { index: true, element: <Navigate replace to="dashboard" /> },

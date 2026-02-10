@@ -1,5 +1,5 @@
 import { menuConfig } from "./generateRoute"
-export const renderMenuTree = (tree) => {
+export const renderMenuTree = (tree: any) => {
     return tree.map((menu: any) => {
         const config = menuConfig.find(config => config.name === menu.name)
         if (!config || config?.hidden) return null

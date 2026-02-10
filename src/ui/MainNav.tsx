@@ -1,6 +1,5 @@
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
-import { menuConfig } from "../utils/generateRoute";
 import { getUserMenus } from "../services/apiMenu";
 import useUser from "../features/authentication/useUser";
 import { useQuery } from "@tanstack/react-query";
