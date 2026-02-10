@@ -24,7 +24,10 @@ const HeadingGroup = styled.div`
 
 function BookingDetail() {
 
-  const statusToTagName = {
+  const statusToTagName: Record<
+    "unconfirmed" | "checked-in" | "checked-out",
+    "blue" | "green" | "silver"
+  > = {
     unconfirmed: "blue",
     "checked-in": "green",
     "checked-out": "silver",
@@ -36,12 +39,16 @@ function BookingDetail() {
   const moveBack = useMoveBack()
   if (isPending) return <Spinner />
   if (Object.keys(booking).length === 0) return <Empty resourceName={`Booking ${bookingId}`} />
+
+  const status = booking?.status as keyof typeof statusToTagName;
   return (
     <>
       <Row type="horizontal">
         <HeadingGroup>
           <Heading as="h1">Booking {bookingId}</Heading>
-          <Tag type={statusToTagName[booking?.status]}>{booking?.status.replace("-", " ")}</Tag>
+          <Tag type={statusToTagName[status]}>
+            {booking?.status.replace("-", " ")}
+          </Tag>
         </HeadingGroup>
       </Row>
 
@@ -64,7 +71,7 @@ function BookingDetail() {
             Back
           </Button>
           <Modal.Window name='delete'>
-            <ConfirmDelete resourceName='booking' onConfirm={() => deleteBookingMuate(bookingId)} disabled={isDeleting} />
+            <ConfirmDelete resourceName='booking' onConfirm={() => deleteBookingMuate(bookingId!)} disabled={isDeleting} />
           </Modal.Window>
         </ButtonGroup>
       </Modal>

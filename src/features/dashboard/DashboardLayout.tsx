@@ -21,10 +21,10 @@ function DashboardLayout() {
   if (isPendingBookings || isLoadingStays || isLoadingCabins) return <Spinner />
   return (
     <StyledDashboardLayout>
-      <Stats bookings={recentBookings} confirmedStays={confirmedStays} numDays={numDays} cabinCount={cabins?.length || 0} />
+      <Stats bookings={recentBookings ?? []} confirmedStays={confirmedStays ?? []} numDays={numDays} cabinCount={cabins?.length || 0} />
       <TodayActivity />
-      <DurationChart confirmedStays={confirmedStays} />
-      <SalesChart bookings={recentBookings} numDays={numDays} />
+      <DurationChart confirmedStays={confirmedStays ?? []} />
+      <SalesChart bookings={recentBookings ?? []} numDays={numDays} />
     </StyledDashboardLayout>
   )
 }

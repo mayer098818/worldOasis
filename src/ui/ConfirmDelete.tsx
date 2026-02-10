@@ -21,7 +21,7 @@ const StyledConfirmDelete = styled.div`
   }
 `;
 
-function ConfirmDelete({ resourceName, onConfirm, disabled }) {
+function ConfirmDelete({ resourceName, onConfirm, disabled }: { resourceName: string, onConfirm: () => void, disabled: boolean }) {
   const { close } = useModal()
   return (
     <StyledConfirmDelete>

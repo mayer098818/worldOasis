@@ -66,24 +66,24 @@ function MainNav() {
 
   if (isLoadingMenus) return <Spinner />;
 
-  const menuList = menus?.map(menu => {
-    const config = menuConfig.find(config => config.name === menu.name);
-    if (!config) return null;
-    let path = config.path;
-    if (menu.name === 'checkin') {
-      path = `/checkin/${menu.bookingId}`;
-    }
-    return {
-      path,
-      icon: config.icon,
-      label: config.label
-    };
-  }).filter(Boolean);
+  const menuList = menus
+    ?.map((menu) => {
+      const config = menuConfig.find((config) => config.name === menu.name);
+      if (!config) return null;
+      // 使用菜单配置中的 path，如果数据库中有自定义 path 则使用数据库的
+      const path = menu.path || config.path;
+      return {
+        path,
+        icon: config.icon,
+        label: config.label || menu.label,
+      };
+    })
+    .filter((item): item is { path: string; icon: React.ReactNode; label: string } => item !== null) ?? [];
 
   return (
     <nav>
       <NavList>
-        {menuList?.map(item => (
+        {menuList.map((item) => (
           <li key={item.path}>
             <StyledNavLink to={item.path}>
               {item.icon}

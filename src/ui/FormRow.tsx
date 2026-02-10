@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { isValidElement } from "react";
+
 const FormRowStyled = styled.div`
   display: grid;
   align-items: center;
@@ -33,13 +35,17 @@ const Error = styled.span`
   font-size: 1.4rem;
   color: var(--color-red-700);
 `;
-const FormRow = ({ children, label, error }: { children: React.ReactNode, label: string, error: any }) => {
+
+const FormRow = ({ children, label, error }: { children: React.ReactNode; label: string; error: any }) => {
+  // 检查 children 是否是有效的 React 元素，并获取 id
+  const inputId = isValidElement(children) && (children.props as any)?.id ? (children.props as any).id : undefined;
+
   return (
-    <FormRowStyled >
-      <Label htmlFor={children?.props?.id as string}>{label}</Label>
+    <FormRowStyled>
+      <Label htmlFor={inputId}>{label}</Label>
       {children}
       {error?.message && <Error>{error.message}</Error>}
     </FormRowStyled>
-  )
-}
+  );
+};
 export default FormRow

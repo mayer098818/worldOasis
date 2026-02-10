@@ -80,7 +80,7 @@ export async function userUpadate({ fullName, avatarFile, password }: { fullName
     let updateData;
     if (fullName) { updateData = { fullName } }
     if (password) { updateData = { password } }
-    const { data: userData, error: userError } = await supabase.auth.updateUser({
+    const { error: userError } = await supabase.auth.updateUser({
         data: updateData,
     });
     if (userError) throw new Error(userError.message);
@@ -89,7 +89,6 @@ export async function userUpadate({ fullName, avatarFile, password }: { fullName
     const ext = avatarFile.name.split('.').pop();
 
     const fileName = `avatar-${Date.now()}.${ext}`;
-    // const fileName = `avatar-${userData.user.id}-${Math.random()}`;
 
     const { error: storageError } = await supabase.storage
         .from("avatars")

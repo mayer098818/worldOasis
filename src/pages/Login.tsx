@@ -4,8 +4,7 @@ import Form from "../ui/Form";
 import { useForm } from "react-hook-form";
 import CabinForm from "../features/cabins/CabinForm";
 import Button from "../ui/Button";
-import Checkbox from "../ui/Checkbox";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useLogin from "../features/authentication/useLogin";
 import Spinner from "../ui/Spinner";
 import { Link, useLocation } from "react-router-dom";
@@ -36,9 +35,6 @@ const ButtonWrapper = styled.div`
     width: 100%;
   }
 `;
-const Box = styled.div`
-padding-top:4px;
-`
 const LoginLink = styled.div`
   display:flex;
   justify-content:end;
@@ -66,8 +62,14 @@ const cabinConfig = [
     }
   }
 ]
+
+type LoginFormValues = {
+  email: string;
+  password: string;
+};
+
 function Login() {
-  const { handleSubmit, formState: { errors }, control, reset } = useForm()
+  const { handleSubmit, formState: { errors }, control, reset } = useForm<LoginFormValues>()
   const { login, isLogining } = useLogin()
   const { state } = useLocation()
   useEffect(() => {
@@ -75,10 +77,15 @@ function Login() {
       reset({ email: state.email })
     }
   }, [state, reset])
-  const onSubmit = ({ email, password }) => {
-    login({ email, password }, {
-      onSettled: () => { reset({ email: '', password: '' }) }
-    })
+  const onSubmit = ({ email, password }: { email: string; password: string }) => {
+    login(
+      { email, password },
+      {
+        onSettled: () => {
+          reset({ email: '', password: '' })
+        },
+      }
+    )
   }
   if (isLogining) return <Spinner />
   return <LoginLayout>

@@ -7,7 +7,7 @@ function Logout() {
     const { logout, isLogouting } = useLogout();
 
     return (
-        <ButtonIcon disabled={isLogouting} onClick={logout}>
+        <ButtonIcon disabled={isLogouting} onClick={() => logout()}>
             {!isLogouting ? <LogOut color="var(--color-grey-600)" /> : <SpinnerMini color="var(--color-grey-600)" />}
         </ButtonIcon>
     );

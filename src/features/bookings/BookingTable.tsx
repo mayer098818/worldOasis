@@ -1,6 +1,5 @@
 import BookingRow from "./BookingRow.tsx";
 import Table from "../../ui/Table";
-import Menus from "../../ui/Menus";
 import useBookings from "./useBookings.ts";
 import Spinner from "../../ui/Spinner.tsx";
 import Pagination from "../../ui/Pagination.tsx";
@@ -24,12 +23,12 @@ function BookingTable() {
 
         <Table.Body
           data={bookings || []}
-          render={(booking) => (
+          render={(booking: any) => (
             <BookingRow key={booking.id} booking={booking} />
           )}
         />
         <Table.Footer>
-          <Pagination count={count} />
+          <Pagination count={count || 1} />
         </Table.Footer>
       </Table>
     </>

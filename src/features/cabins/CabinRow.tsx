@@ -9,6 +9,7 @@ import Modal from "../../ui/Modal.tsx";
 import ConfirmDelete from "../../ui/ConfirmDelete.tsx";
 import Menus from "../../ui/Menus.tsx";
 import { Ellipsis, BookCopy, Pencil, Trash } from 'lucide-react'
+import Spinner from "../../ui/Spinner.tsx";
 
 const TableRow = styled.div`
   display: grid;
@@ -69,6 +70,7 @@ const CabinRow = ({ cabin, cabinConfig }: { cabin: CabinProps, cabinConfig: any 
       }
     })
   }
+  if (isPending) return <Spinner />
   return <>
     <TableRow role="row">
       <Img src={image} />

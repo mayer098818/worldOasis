@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import Signup from "../features/authentication/Signup";
 import { getAllUsers } from "../services/apiAuth";
 import Heading from "../ui/Heading";
 import Table from "../ui/Table";
@@ -26,7 +25,6 @@ function NewUsers() {
   });
   if (isLoading) return <Spinner />;
   if (error) return <Empty resourceName="Users" />;
-  console.log(users, 'users')
   return <>
     <Heading as="h1">Create a new user</Heading>
     <Table columns="1fr 1fr 1fr">
@@ -36,7 +34,7 @@ function NewUsers() {
         <div>Eamil</div>
         <div>Role</div>
       </Table.Header>
-      <Table.Body data={users} render={(user) => (
+      <Table.Body data={users || []} render={(user: any) => (
         <TableRow role="row">
           <div>{user.fullName}</div>
           <div>{user.email}</div>

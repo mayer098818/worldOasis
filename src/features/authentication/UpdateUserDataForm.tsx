@@ -64,7 +64,7 @@ function UpdateUserDataForm() {
     })
   }, [user, reset])
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: any) => {
     const avatarFile =
       data.avatar?.[0]?.originFileObj ?? undefined;
     updateUser({ fullName: data?.fullName, avatarFile, password: data?.password }, {

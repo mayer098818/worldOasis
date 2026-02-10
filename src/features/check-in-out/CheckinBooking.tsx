@@ -24,7 +24,7 @@ const Box = styled.div`
   padding: 2.4rem 4rem;
 `;
 
-function CheckinBooking({ booking }) {
+function CheckinBooking({ booking }: { booking: any }) {
   const [confirmPaid, setConfirmPaid] = useState(false)
   const [addBreakfast, setAddBreakfast] = useState(false)
   const moveBack = useMoveBack();

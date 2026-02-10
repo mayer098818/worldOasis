@@ -70,6 +70,8 @@ type ButtonProps = PropsWithChildren<
     ButtonHTMLAttributes<HTMLButtonElement> & {
         size?: ButtonSize;
         variation?: ButtonVariation;
+        as?: React.ElementType;
+        [key: string]: any; // Allow additional props when using 'as' prop
     }
 >;
 
@@ -77,10 +79,11 @@ function Button({
     children,
     size = "medium",
     variation = "primary",
+    as,
     ...rest
 }: ButtonProps) {
     return (
-        <StyledButton $size={size} $variation={variation} {...rest}>
+        <StyledButton as={as} $size={size} $variation={variation} {...rest}>
             {children}
         </StyledButton>
     );

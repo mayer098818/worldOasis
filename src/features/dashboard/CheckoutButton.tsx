@@ -2,7 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import Button from "../../ui/Button";
 import useCheckout from "../check-in-out/useCheckout";
 
-function CheckoutButton({ bookingId }) {
+function CheckoutButton({ bookingId }: { bookingId: string }) {
     const queryClient = useQueryClient()
     const { checkout, isCheckingOut } = useCheckout();
     console.log(bookingId, 'bookingId')

@@ -92,7 +92,7 @@ const renderComponent = ({ item, field, Component, onInputBlur, onSearch, isPend
             {...field}
             fileList={field.value}
             beforeUpload={() => false}   // 阻止自动上传
-            onChange={({ fileList }) => {
+            onChange={({ fileList }: { fileList: any[] }) => {
                 console.log(fileList, 'fileList onchange')
                 field.onChange(fileList);
             }}

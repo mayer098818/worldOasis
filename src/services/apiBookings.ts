@@ -2,7 +2,26 @@ import { PAGE_SIZE } from "../utils/constants.ts";
 import { getToday } from "../utils/helpers.ts";
 import supabase from "./superbase";
 
-export async function getBookings({ filter, sortBy, page }: { filter?: any, sortBy?: any, page?: any }) {
+type BookingFilter = {
+  field: string;
+  value: any;
+  method?: "eq" | "gte" | "lte";
+};
+
+type BookingSort = {
+  field: string;
+  direction: "asc" | "desc";
+};
+
+export async function getBookings({
+  filter,
+  sortBy,
+  page,
+}: {
+  filter?: BookingFilter;
+  sortBy?: BookingSort;
+  page?: number;
+}) {
   let query = supabase
     .from("bookings")
     .select(
@@ -10,7 +29,12 @@ export async function getBookings({ filter, sortBy, page }: { filter?: any, sort
       { count: "exact" }
     );
   //  filter
-  if (filter) query = query[filter.method || "eq"](filter.field, filter.value)
+  if (filter) {
+    const { field, value, method = "eq" } = filter;
+    if (method === "eq") query = query.eq(field, value);
+    else if (method === "gte") query = query.gte(field, value);
+    else if (method === "lte") query = query.lte(field, value);
+  }
   // sortby
   if (sortBy)
     query = query.order(sortBy.field, {
@@ -27,7 +51,7 @@ export async function getBookings({ filter, sortBy, page }: { filter?: any, sort
   return { data, count }
 }
 
-export async function getBooking(id) {
+export async function getBooking(id: string) {
   const { data, error } = await supabase
     .from("bookings")
     .select("*, cabins(*), guests(*)")
@@ -43,7 +67,7 @@ export async function getBooking(id) {
 }
 
 // Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
-export async function getBookingsAfterDate(date) {
+export async function getBookingsAfterDate(date: string) {
   const { data, error } = await supabase
     .from("bookings")
     .select("created_at, totalPrice, extrasPrice")
@@ -59,7 +83,7 @@ export async function getBookingsAfterDate(date) {
 }
 
 // Returns all STAYS that are were created after the given date
-export async function getStaysAfterDate(date) {
+export async function getStaysAfterDate(date: string) {
   const { data, error } = await supabase
     .from("bookings")
     // .select('*')
@@ -101,7 +125,7 @@ export async function getStaysTodayActivity() {
   return data;
 }
 
-export async function updateBooking(id, obj) {
+export async function updateBooking(id: string, obj: any) {
   console.log(id, 'aadss')
   const { data, error } = await supabase
     .from("bookings")
@@ -117,7 +141,7 @@ export async function updateBooking(id, obj) {
   return data;
 }
 
-export async function deleteBooking(id) {
+export async function deleteBooking(id: string) {
   // REMEMBER RLS POLICIES
   const { data, error } = await supabase.from("bookings").delete().eq("id", id);
 

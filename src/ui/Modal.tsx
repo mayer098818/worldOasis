@@ -1,8 +1,7 @@
 import styled from "styled-components";
 import { ArrowLeft } from 'lucide-react'
 import { createPortal } from "react-dom";
-// import { createContext } from "react-router-dom";
-import React, { useContext, createContext, useState, cloneElement, isValidElement, useEffect, useRef } from "react";
+import React, { useContext, createContext, useState, cloneElement, isValidElement } from "react";
 import useClickOutside from "../hooks/useClickOutside";
 const StyledModal = styled.div`
   position: fixed;

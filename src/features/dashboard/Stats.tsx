@@ -2,12 +2,22 @@ import { Briefcase, CalendarDays, ChartBar } from "lucide-react"
 import Stat from "./Stat"
 import { formatCurrency } from "../../utils/helpers";
 
-const Stats = ({ bookings, confirmedStays, numDays, cabinCount }: { bookings: any, confirmedStays: any, numDays: number, cabinCount: number }) => {
+type Booking = {
+    totalPrice: number | null | undefined;
+    [key: string]: any;
+};
+
+type Stay = {
+    numNights: number | null | undefined;
+    [key: string]: any;
+};
+
+const Stats = ({ bookings, confirmedStays, numDays, cabinCount }: { bookings: Booking[], confirmedStays: Stay[], numDays: number, cabinCount: number }) => {
     const numBookings = bookings.length || 0
-    const sales = bookings.reduce((acc, cur) => acc + cur.totalPrice, 0);
+    const sales = bookings.reduce((acc: number, cur: Booking) => acc + (Number(cur.totalPrice) || 0), 0);
     const checkins = confirmedStays.length;
     const occupation =
-        confirmedStays.reduce((acc, cur) => Number(acc) + Number(cur.numNights), 0);
+        confirmedStays.reduce((acc: number, cur: Stay) => acc + (Number(cur.numNights) || 0), 0);
     const occupationRate = occupation / (Number(numDays) * Number(cabinCount))
     return (
         <>

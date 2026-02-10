@@ -7,7 +7,7 @@ import Table from "../../ui/Table.tsx";
 import { formatCurrency } from "../../utils/helpers.ts";
 import { formatDistanceFromNow } from "../../utils/helpers.ts";
 import Menus from "../../ui/Menus.tsx";
-import { Delete, Ellipsis, Eye, LogOut, PencilLine, Trash, View } from "lucide-react";
+import { Ellipsis, Eye, LogOut, PencilLine, Trash } from "lucide-react";
 import Modal from "../../ui/Modal.tsx";
 import ConfirmDelete from "../../ui/ConfirmDelete.tsx";
 import useDeleteBooking from "./useDeleteBooking.ts";
@@ -41,21 +41,35 @@ const Amount = styled.div`
   font-weight: 500;
 `;
 
+type BookingRowProps = {
+  booking: {
+    id: number | string;
+    startDate: string;
+    endDate: string;
+    numNights: number;
+    totalPrice: number;
+    status: string;
+    guests: { fullName: string; email: string };
+    cabins: { name: string };
+  };
+};
+
 function BookingRow({
   booking: {
     id: bookingId,
-    created_at,
     startDate,
     endDate,
     numNights,
-    numGuests,
     totalPrice,
     status,
     guests: { fullName: guestName, email },
     cabins: { name: cabinName },
   },
-}) {
-  const statusToTagName = {
+}: BookingRowProps) {
+  const statusToTagName: Record<
+    "unconfirmed" | "checked-in" | "checked-out",
+    "blue" | "green" | "silver"
+  > = {
     unconfirmed: "blue",
     "checked-in": "green",
     "checked-out": "silver",
@@ -63,7 +77,8 @@ function BookingRow({
   console.log(status, 'status')
   const navigate = useNavigate()
   const { deleteBookingMuate, isDeleting } = useDeleteBooking()
-  const { checkout, isCheckingOut } = useCheckout()
+  const { checkout } = useCheckout()
+  const statusKey = status as keyof typeof statusToTagName;
   return (
     <Table.Row>
       <Cabin>{cabinName}</Cabin>
@@ -86,26 +101,26 @@ function BookingRow({
         </span>
       </Stacked>
 
-      <Tag type={statusToTagName[status]}>{status.replace("-", " ")}</Tag>
+      <Tag type={statusToTagName[statusKey]}>{status.replace("-", " ")}</Tag>
 
       <Amount>{formatCurrency(totalPrice)}</Amount>
       <Modal>
 
         <Menus>
-          <Menus.Toggle id={bookingId}>
+          <Menus.Toggle id={String(bookingId)}>
             <Ellipsis />
           </Menus.Toggle>
-          <Menus.List id={bookingId}>
+          <Menus.List id={String(bookingId)}>
             <Menus.Button icon={<Eye />} onClick={() => navigate(`/bookings/${bookingId}`)}>See details</Menus.Button>
             {status === 'unconfirmed' &&
               <Menus.Button icon={<PencilLine />} onClick={() => navigate(`/checkin/${bookingId}`)}>Check in</Menus.Button>
             }
             {status === 'checked-in' &&
               <Menus.Button icon={<LogOut />} onClick={() => {
-                checkout({ bookingId })
+                checkout({ bookingId: String(bookingId) })
                 navigate('/')
               }}>
-                Check out{bookingId}
+                Check out
               </Menus.Button>
             }
             <Modal.Open name='delete'>
@@ -117,7 +132,7 @@ function BookingRow({
         </Menus>
 
         <Modal.Window name='delete'>
-          <ConfirmDelete resourceName='booking' onConfirm={() => deleteBookingMuate(bookingId)} disabled={isDeleting} />
+          <ConfirmDelete resourceName='booking' onConfirm={() => deleteBookingMuate(String(bookingId))} disabled={isDeleting} />
         </Modal.Window>
       </Modal>
     </Table.Row>
