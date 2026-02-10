@@ -13,7 +13,7 @@ function App() {
     enabled: !!user?.id,
 
   })
-  console.log(menus, 'menus')
+
   const routes = generateRoute(menus ?? [])
   const router = createBrowserRouter(routes)
   if (isLoadingUser || isLoadingMenus) return <Spinner />;

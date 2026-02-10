@@ -5,6 +5,8 @@ import { getUserMenus } from "../services/apiMenu";
 import useUser from "../features/authentication/useUser";
 import { useQuery } from "@tanstack/react-query";
 import Spinner from "./Spinner";
+import { buildMenuTree } from "../utils/buildMenuTree";
+import { renderMenuTree } from "../utils/renderMenuTree";
 const NavList = styled.ul`
   display: flex;
   flex-direction: column;
@@ -66,24 +68,13 @@ function MainNav() {
 
   if (isLoadingMenus) return <Spinner />;
 
-  const menuList = menus
-    ?.map((menu) => {
-      const config = menuConfig.find((config) => config.name === menu.name);
-      if (!config) return null;
-      // 使用菜单配置中的 path，如果数据库中有自定义 path 则使用数据库的
-      const path = menu.path || config.path;
-      return {
-        path,
-        icon: config.icon,
-        label: config.label || menu.label,
-      };
-    })
-    .filter((item): item is { path: string; icon: React.ReactNode; label: string } => item !== null) ?? [];
+  const menuTree = buildMenuTree(menus ?? [])
+  const sidebarMenu = renderMenuTree(menuTree)
 
   return (
     <nav>
       <NavList>
-        {menuList.map((item) => (
+        {sidebarMenu.map((item: any) => (
           <li key={item.path}>
             <StyledNavLink to={item.path}>
               {item.icon}
